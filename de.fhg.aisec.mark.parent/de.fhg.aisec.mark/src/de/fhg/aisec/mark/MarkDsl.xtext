@@ -1,0 +1,9 @@
+grammar de.fhg.aisec.mark.MarkDsl with org.eclipse.xtext.common.Terminals
+
+generate markDsl "http://www.fhg.de/aisec/mark/MarkDsl"
+
+Model:
+	greetings+=Greeting*;
+	
+Greeting:
+	'Hello' name=ID '!';
