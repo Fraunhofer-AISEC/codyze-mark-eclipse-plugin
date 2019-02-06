@@ -11,14 +11,14 @@ cache:
     - .m2/repository/
     - target/
 
+build:
+  stage: build
+  script:
+    - mvn $MAVEN_CLI_OPTS package
+
 test:
   stage: test
   script:
     - mvn $MAVEN_CLI_OPTS test
-
-package:
-  stage: package
-  script:
-    - mvn $MAVEN_CLI_OPTS package
 
 
