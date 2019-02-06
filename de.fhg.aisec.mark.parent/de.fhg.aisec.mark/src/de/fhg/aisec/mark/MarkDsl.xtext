@@ -1,9 +1,25 @@
+/**
+ * This is the ANTLR/Xtext grammar definition for the MARK domain specific language. 
+ */
 grammar de.fhg.aisec.mark.MarkDsl with org.eclipse.xtext.common.Terminals
 
 generate markDsl "http://www.fhg.de/aisec/mark/MarkDsl"
 
 Model:
-	greetings+=Greeting*;
+	statements+=Statement*;
+
+Statement:
+	LetStmt | UsingStmt
+;
+
+LetStmt:
+	'LET' name=ID '=' expression=Expression
+;
+
+UsingStmt:
+	'USING' name=ID 'ENSURE' 'THAT' invariant=STRING 'REASON' reason=STRING
+;
 	
-Greeting:
-	'Hello' name=ID '!';
+Expression:
+	'Hallo'
+;

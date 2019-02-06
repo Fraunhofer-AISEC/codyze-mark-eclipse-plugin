@@ -7,10 +7,17 @@
   <genPackages prefix="MarkDsl" basePackage="de.fhg.aisec.mark" disposableProviderFactory="true"
       fileExtensions="mark" ecorePackage="MarkDsl.ecore#/">
     <genClasses ecoreClass="MarkDsl.ecore#//Model">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference MarkDsl.ecore#//Model/greetings"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference MarkDsl.ecore#//Model/statements"/>
     </genClasses>
-    <genClasses ecoreClass="MarkDsl.ecore#//Greeting">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarkDsl.ecore#//Greeting/name"/>
+    <genClasses ecoreClass="MarkDsl.ecore#//Statement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarkDsl.ecore#//Statement/name"/>
+    </genClasses>
+    <genClasses ecoreClass="MarkDsl.ecore#//LetStmt">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarkDsl.ecore#//LetStmt/expression"/>
+    </genClasses>
+    <genClasses ecoreClass="MarkDsl.ecore#//UsingStmt">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarkDsl.ecore#//UsingStmt/invariant"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarkDsl.ecore#//UsingStmt/reason"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>
