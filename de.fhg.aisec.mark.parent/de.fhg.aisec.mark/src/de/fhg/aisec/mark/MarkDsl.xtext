@@ -13,13 +13,21 @@ Statement:
 ;
 
 LetStmt:
-	'LET' name=ID '=' expression=Expression
+	'LET' name=ID '=' expression=Sequence
 ;
 
 UsingStmt:
-	'USING' name=ID 'ENSURE' 'THAT' invariant=STRING 'REASON' reason=STRING
+	'USING' name=[LetStmt] 'ENSURE' 'THAT' invariant=STRING 'REASON' reason=STRING // TODO invariant
 ;
 	
-Expression:
-	'Hallo'
+Sequence:
+	headTerm=TraversalTerm ('->' tailTerms+=TraversalTerm)*
 ;
+
+TraversalTerm:
+	name=ID '(' parameters=ArgumentList? ')'
+;
+
+ArgumentList
+    : head=ID (',' tail+=ID)*
+    ;

@@ -9,15 +9,27 @@
     <genClasses ecoreClass="MarkDsl.ecore#//Model">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference MarkDsl.ecore#//Model/statements"/>
     </genClasses>
-    <genClasses ecoreClass="MarkDsl.ecore#//Statement">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarkDsl.ecore#//Statement/name"/>
-    </genClasses>
+    <genClasses ecoreClass="MarkDsl.ecore#//Statement"/>
     <genClasses ecoreClass="MarkDsl.ecore#//LetStmt">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarkDsl.ecore#//LetStmt/expression"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarkDsl.ecore#//LetStmt/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference MarkDsl.ecore#//LetStmt/expression"/>
     </genClasses>
     <genClasses ecoreClass="MarkDsl.ecore#//UsingStmt">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference MarkDsl.ecore#//UsingStmt/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarkDsl.ecore#//UsingStmt/invariant"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarkDsl.ecore#//UsingStmt/reason"/>
+    </genClasses>
+    <genClasses ecoreClass="MarkDsl.ecore#//Sequence">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference MarkDsl.ecore#//Sequence/headTerm"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference MarkDsl.ecore#//Sequence/tailTerms"/>
+    </genClasses>
+    <genClasses ecoreClass="MarkDsl.ecore#//TraversalTerm">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarkDsl.ecore#//TraversalTerm/name"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference MarkDsl.ecore#//TraversalTerm/parameters"/>
+    </genClasses>
+    <genClasses ecoreClass="MarkDsl.ecore#//ArgumentList">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarkDsl.ecore#//ArgumentList/head"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute MarkDsl.ecore#//ArgumentList/tail"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>
