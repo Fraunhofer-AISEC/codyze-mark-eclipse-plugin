@@ -6,8 +6,8 @@
     copyrightFields="false" runtimeVersion="2.14">
   <genPackages prefix="MarkDsl" basePackage="de.fhg.aisec.mark" disposableProviderFactory="true"
       fileExtensions="mark" ecorePackage="MarkDsl.ecore#/">
-    <genClasses ecoreClass="MarkDsl.ecore#//Model">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference MarkDsl.ecore#//Model/statements"/>
+    <genClasses ecoreClass="MarkDsl.ecore#//MarkModel">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference MarkDsl.ecore#//MarkModel/statements"/>
     </genClasses>
     <genClasses ecoreClass="MarkDsl.ecore#//Statement"/>
     <genClasses ecoreClass="MarkDsl.ecore#//LetStmt">
