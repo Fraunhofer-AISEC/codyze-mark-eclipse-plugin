@@ -3,15 +3,12 @@
  */
 package de.fhg.aisec.mark.generator
 
+import de.fhg.aisec.mark.markDsl.MarkModel
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
-import de.fhg.aisec.mark.markDsl.MarkModel
-import de.fhg.aisec.mark.markDsl.LetStmt
-import de.fhg.aisec.mark.markDsl.UsingStmt
-import de.fhg.aisec.mark.markDsl.Sequence
-import de.fhg.aisec.mark.markDsl.ArgumentList
 
 /**
  * This is the code generator that creates Crymlin (= Gremlin) queries out from a MARK policy.
@@ -45,67 +42,81 @@ class MarkDslGenerator extends AbstractGenerator {
 	 * 
 	 * Everything between triple-ticks (''') is returned as a string. Within that template, Xtend expressions can be used for variables and control flow.
 	 */
-	def toCrymlin(MarkModel model)'''
+	def toCrymlin(MarkModel model) '''
 		/*
 		 * Auto-generated Crymlin file, do not edit manually.
 		 *
 		 * This file has been created from MARK and will be overwritten at every change in the original file. 
 		*/
-		«printBody(model)»
+«««		«printBody(model)»
+		«dump(model, "")»
 	'''
-	
-	def CharSequence printBody(MarkModel model) {
-		var result = "";
-		for (stmt : model.statements) {
-			switch stmt {
-				LetStmt:  result += printLetStmt(stmt),
-				UsingStmt: result += printUsingStmt(stmt)
-				default: result += ""
-			}
+
+	/**
+	 * https://stackoverflow.com/questions/13701199/viewing-the-parse-tree-node-model-ast-in-xtext
+	 */
+	def static String dump(EObject mod_, String indent) {
+		var res = indent + mod_.toString.replaceFirst('.*[.]impl[.](.*)Impl[^(]*', '$1 ')
+
+		for (a : mod_.eCrossReferences) {
+			res += ' -> ' + a.toString().replaceFirst('.*[.]impl[.](.*)Impl[^(]*', '$1 ')
+
 		}
-		return result;
-	}
-
-	/**
-	 * Prints a sequence of terms, concatenated with ".out(..)".
-	 * 
-	 * EXPLANATION: This style opens a template environment with triple-ticks ('''). Within that template, we use XTend expressions («..»)to refer to variables and a FOR loop.
-	 * The template style make sense for larger predefined templates with only few dynamic parts. In this example here, it looks pretty confusing due to the constant switching between modes.  
-	 */
-	def CharSequence printSequence(Sequence expr)
-		'''«expr.headTerm.name»(«printArgumentList(expr.headTerm.parameters)»)«FOR term : expr.tailTerms».out(«term.name»(«printArgumentList(term.parameters)»))«ENDFOR»'''
-
-	/**
-	 * Prints a sequence of terms, concatenated with ".out(..)".
-	 * 
-	 * It does EXACTLY the same as printSequence().
-	 * 
-	 * EXPLANATION: This style does NOT open a template environment but simply constructs the returned string in XTend (a Java dialect).
-	 */
-	def CharSequence printSequenceDEMO_XTend(Sequence expr) {
-		var res = expr.headTerm.name;
-		for (term : expr.tailTerms) {
-			res += term.name + "(" + printArgumentList(term.parameters) + ")"
+		res += "\n"
+		
+		for (f : mod_.eContents) {
+			res += f.dump(indent + "  ")
 		}
-		return res;
+		return res
 	}
 
-	/**
-	 * Prints a comma-separated sequence of arguments.
-	 */
-	def printArgumentList(ArgumentList list)
-		'''«list.head»«FOR arg : list.tail»,«arg»«ENDFOR»'''
+//	def CharSequence printBody(MarkModel model) {
+//		var result = "";
+//
+//		result += model.package + "\n";
+//		for (import : model.imports) {
+//			result += import + "\n";
+//		}
+//		result += model.decl + "\n";
+//
+//		for (vardecl : model.decl.content) {
+//			result += vardecl + "\n";
+//		}
+//
+//		return result;
+//	}
 
-
-	def CharSequence printUsingStmt(UsingStmt stmt) {
-		return "// USING";
-	}
-
-	// TODO Unfinished
-	def CharSequence printLetStmt(LetStmt stmt) 
-	'''
-	// «stmt.toString»
-	Object «stmt.name» = crymlin.«printSequence(stmt.expression)»;'''
-
-
+/**
+ * Prints a sequence of terms, concatenated with ".out(..)".
+ * 
+ * EXPLANATION: This style opens a template environment with triple-ticks ('''). Within that template, we use XTend expressions («..»)to refer to variables and a FOR loop.
+ * The template style make sense for larger predefined templates with only few dynamic parts. In this example here, it looks pretty confusing due to the constant switching between modes.  
+ */
+//	def CharSequence printSequence(
+//		Sequence expr) '''«expr.headTerm.name»(«printArgumentList(expr.headTerm.parameters)»)«FOR term : expr.tailTerms».out(«term.name»(«printArgumentList(term.parameters)»))«ENDFOR»'''
+/**
+ * Prints a sequence of terms, concatenated with ".out(..)".
+ * 
+ * It does EXACTLY the same as printSequence().
+ * 
+ * EXPLANATION: This style does NOT open a template environment but simply constructs the returned string in XTend (a Java dialect).
+ */
+//	def CharSequence printSequenceDEMO_XTend(Sequence expr) {
+//		var res = expr.headTerm.name;
+//		for (term : expr.tailTerms) {
+//			res += term.name + "(" + printArgumentList(term.parameters) + ")"
+//		}
+//		return res;
+//	}
+/**
+ * Prints a comma-separated sequence of arguments.
+ */
+//	def printArgumentList(ArgumentList list) '''«list.head»«FOR arg : list.tail»,«arg»«ENDFOR»'''
+//	def CharSequence printUsingStmt(UsingStmt stmt) {
+//		return "// USING";
+//	}
+// TODO Unfinished
+//	def CharSequence printLetStmt(LetStmt stmt) '''
+//	// «stmt.toString»
+//	Object «stmt.name» = crymlin.«printSequence(stmt.expression)»;'''
 }

@@ -3,31 +3,132 @@
  */
 grammar de.fhg.aisec.mark.MarkDsl with org.eclipse.xtext.common.Terminals
 
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate markDsl "http://www.fhg.de/aisec/mark/MarkDsl"
 
 MarkModel:
-	statements+=Statement*;
+	package=PackageClause
+	imports+=ImportDeclaration*
+	decl=EntityDeclaration;
+
+PackageClause:
+	'package' name=QualifiedName;
+
+ImportDeclaration:
+	'import' name=QualifiedName;
+
+EntityDeclaration:
+	'entity' name=ID ('isa' superType=[EntityDeclaration])? '{' (content+=VariableDeclaration)* '}';
+
+VariableDeclaration:
+	'var' name=ID (":" type=Type)? ("=" init=InitializerExpression | "where" where=WhereExpression)? ";";
+
+InitializerExpression:
+	Literal | List;
+
+List:
+	{List} "[" items=LiteralList? "]";
+
+WhereExpression:
+	Expression;
+
+QualifiedName:
+	ID (=> '.' ID)*;
+
+Type:
+	TypeName | TypeLiteral;
+
+TypeName:
+	BasicType | QualifiedName;
+
+BasicType:
+	"uint" | "int" | "bool";
+
+TypeLiteral:
+	ListType;
+
+ListType:
+	"[]" Type;
+
+Expression:
+	TerminalExpression ({Operation.left=current} op="+" right=TerminalExpression)*;
+
+TerminalExpression returns Expression:
+	"(" Expression ")" | Literal;
+
+BinaryOperator:
+	"and" | "or";
 
 Statement:
-	LetStmt | UsingStmt
+//	LetStmt | UsingStmt | 
+	TypeDeclarationStmt;
+
+	//LetStmt:
+//	'LET' name=ID '=' expression=Sequence;
+//
+//UsingStmt:
+//	'USING' name=[LetStmt] 'ENSURE' 'THAT' invariant=STRING 'REASON' reason=STRING // TODO invariant
+//;
+
+//Sequence:
+//	headTerm=TraversalTerm ('->' tailTerms+=TraversalTerm)*;
+//
+//TraversalTerm:
+//	name=ID '(' parameters=ArgumentList? ')';
+//
+//ArgumentList:
+//	head=ID (',' tail+=ID)*;
+TypeDeclarationStmt:
+	name=ID ('isa' superType=ID)? '{' (content+=ID)* '}';
+
+	//Type:
+//	name=ID;
+
+
+
+LiteralList:
+	lit+=Literal (',' lit+=Literal)*;
+
+Literal:
+	{IntegerLiteral} value=IntegerLiteral | 
+	{FloatingPointLiteral} value=FloatingPointLiteral | 
+	{BooleanLiteral} value=BooleanLiteral | 
+	{CharacterLiteral} value=CharacterLiteral | 
+	{StringLiteral} value=StringLiteral
 ;
 
-LetStmt:
-	'LET' name=ID '=' expression=Sequence
-;
+IntegerLiteral:
+	INT | HEX;
 
-UsingStmt:
-	'USING' name=[LetStmt] 'ENSURE' 'THAT' invariant=STRING 'REASON' reason=STRING // TODO invariant
-;
+FloatingPointLiteral:
+	INT '.' INT;
 	
-Sequence:
-	headTerm=TraversalTerm ('->' tailTerms+=TraversalTerm)*
-;
+BooleanLiteral:
+	'true' | 'false';
+	
+CharacterLiteral:
+	CHARACTER;
 
-TraversalTerm:
-	name=ID '(' parameters=ArgumentList? ')'
-;
+StringLiteral:
+	STRING;
 
-ArgumentList
-    : head=ID (',' tail+=ID)*
-    ;
+
+terminal HEX:
+	'0x' (HEX_DIGIT)+;
+
+@Override
+terminal STRING:
+	'"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|"'"|'\\') | !('\\'|'"') )* '"';
+
+terminal CHARACTER:
+	"'" ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|"'"|'\\') | !('\\'|"'") )? "'";
+
+terminal fragment HEX_DIGIT:
+	DIGIT | 'a'..'f' | 'A'..'F';
+
+terminal fragment DIGIT:
+	'0' | NONZERO_DIGIT;
+
+terminal fragment NONZERO_DIGIT:
+	'1'..'9';
+
