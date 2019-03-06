@@ -3,7 +3,7 @@
  */
 grammar de.fhg.aisec.mark.MarkDsl with org.eclipse.xtext.common.Terminals
 
-import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+//import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate markDsl "http://www.fhg.de/aisec/mark/MarkDsl"
 
 MarkModel:
@@ -51,38 +51,86 @@ ListType:
 	"[]" Type;
 
 Expression:
-	TerminalExpression ({Operation.left=current} op="+" right=TerminalExpression)*;
-
-TerminalExpression returns Expression:
-	"(" Expression ")" | Literal;
-
-BinaryOperator:
-	"and" | "or";
-
-Statement:
-//	LetStmt | UsingStmt | 
-	TypeDeclarationStmt;
-
-	//LetStmt:
-//	'LET' name=ID '=' expression=Sequence;
+	LogicalOrExpression
+;
+//	TerminalExpression ({Operation.left=current} op="+" right=TerminalExpression)*;
 //
-//UsingStmt:
-//	'USING' name=[LetStmt] 'ENSURE' 'THAT' invariant=STRING 'REASON' reason=STRING // TODO invariant
+//TerminalExpression returns Expression:
+//	"(" Expression ")" | Literal;
+
+
+//Expression
+//    : UnaryExpr
+////    | expression BINARY_OP expression
+//    | Expression ('||' | '&&' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '+' | '-' | '|' | '^' | '*' | '/' | '%' | '<<' | '>>' | '&' | '&^') Expression
+//    ;
+//
+//UnaryExpr
+//    : primaryExpr
+//    | ('+'|'-'|'!'|'^'|'*'|'&'|'<-') unaryExpr
 //;
 
-//Sequence:
-//	headTerm=TraversalTerm ('->' tailTerms+=TraversalTerm)*;
-//
-//TraversalTerm:
-//	name=ID '(' parameters=ArgumentList? ')';
-//
-//ArgumentList:
-//	head=ID (',' tail+=ID)*;
-TypeDeclarationStmt:
-	name=ID ('isa' superType=ID)? '{' (content+=ID)* '}';
 
-	//Type:
-//	name=ID;
+LogicalOrExpression returns Expression:
+	LogicalAndExpression ({LogicalOrExpression.left=current} op='||' right=LogicalAndExpression)*
+;
+
+
+LogicalAndExpression returns Expression:
+	ComparisonExpression ({LogicalAndExpression.left=current} op='&&' right=ComparisonExpression)*
+;
+
+ComparisonExpression returns Expression:
+	AdditionExpression ({ComparisonExpression.left=current} op=('=='|'!='|'<'|'<='|'>'|'>=') right=AdditionExpression)*
+;
+
+AdditionExpression returns Expression:
+	MultiplicationExpression ({AdditionExpression.left=current} op=('+'|'-'|'|'|'^') right=MultiplicationExpression)*
+;
+
+MultiplicationExpression returns Expression:
+	PrimaryExpression ({MultiplicationExpression.left=current} op=('*'|'/'|'%'|'<<'|'>>'|'&'|'&^') right=PrimaryExpression)*
+;
+
+UnaryExpression returns Expression:
+	{UnaryExpression} op=('+'|'-'|'!'|'^'|'*'|'&'|'<-') exp=PrimaryExpression 
+;
+
+
+PrimaryExpression returns Expression:
+	Literal |
+	UnaryExpression | 
+	'(' LogicalOrExpression ')'
+;
+
+
+//BinaryOperator:
+//	"and" | "or";
+//
+//Statement:
+////	LetStmt | UsingStmt | 
+//	TypeDeclarationStmt;
+//
+//	//LetStmt:
+////	'LET' name=ID '=' expression=Sequence;
+////
+////UsingStmt:
+////	'USING' name=[LetStmt] 'ENSURE' 'THAT' invariant=STRING 'REASON' reason=STRING // TODO invariant
+////;
+//
+////Sequence:
+////	headTerm=TraversalTerm ('->' tailTerms+=TraversalTerm)*;
+////
+////TraversalTerm:
+////	name=ID '(' parameters=ArgumentList? ')';
+////
+////ArgumentList:
+////	head=ID (',' tail+=ID)*;
+//TypeDeclarationStmt:
+//	name=ID ('isa' superType=ID)? '{' (content+=ID)* '}';
+//
+//	//Type:
+////	name=ID;
 
 
 
