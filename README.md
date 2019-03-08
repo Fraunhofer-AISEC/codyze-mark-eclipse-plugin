@@ -39,3 +39,13 @@ __NOTE: The Maven build is pinned to this specific stable release of Eclipse: S2
 To build the project in Eclipse, click on the green launch configurations button and run _"GenerateMarkDsk Language Infrastructure"_. This will create all the auto-generated language files of the DSL and the code generator.
 
 Now, to see the DSL plugins in action, launch _"MARK.product"_ This will spawn a new instance of Eclipse with the MARK plugins installed. Within that new instance, create a new project and in that project create a new file with the extension `.mark`. There you will have autocompletion and all the other nice features.
+
+
+
+# Playing around
+
+The `examples` folder contains Xtext projects with MARK examples. I use them to test the current syntax implemented in MARK. Feel free to add your own examples.
+
+To use these examples, you have to start the `MARK.product`. It starts a new Eclipse instance with its own workspace. In the new Eclipse instance you can import the Xtext projects from the `project` folder as *Existing Projects into Workspace*. Make sure to deselect the option *Copy projects into workspace* if you want to commit your changes. By deselecting this option the Xtext project folder is used directly.
+
+If you want to start your own examples, you may have to copy your project from the instance's workspace into the `examples` folder. Afterwards, you remove your project from Eclipse and import it from the `examples` folder. Ensure again to deselect the *Copy projects into Workspace* option to be able to commit your changes later on.
