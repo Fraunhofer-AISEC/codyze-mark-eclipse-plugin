@@ -1,0 +1,9 @@
+package de.fhg.aisec.mark.crypto.base
+
+entity CBC isa CipherMode {
+	
+	var bc : BlockCipher;
+	var iv : InitializationVector;
+	var pad : Padding;
+	
+}

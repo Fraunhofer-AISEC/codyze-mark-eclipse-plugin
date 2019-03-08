@@ -1,0 +1,8 @@
+package de.fhg.aisec.mark.crypto.base
+
+entity BlockCipher {
+	
+	var block_size;
+	var key_length;
+	
+}
