@@ -9,3 +9,25 @@ entity AES isa BlockCipher {
 	var lkasdf : uint where (123 || true) != 1 && (false) * 1 | 1 + -(1 + 2 * 3);
 	
 }
+
+
+rule abs {
+	using AES 
+	ensure AES.key_length >= 128 
+	onfail TEST
+}
+
+
+//message TEST {
+//	severity error;
+//	lang en_US;
+//	content "Test
+//sdfsdf
+//
+//sdfsdf
+//
+//sdfsdf
+//sdfs
+//dsdf
+//sdf";
+//}

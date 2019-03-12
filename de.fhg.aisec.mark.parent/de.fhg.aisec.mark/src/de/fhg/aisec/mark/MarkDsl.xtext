@@ -9,7 +9,10 @@ generate markDsl "http://www.fhg.de/aisec/mark/MarkDsl"
 MarkModel:
 	package=PackageClause
 	imports+=ImportDeclaration*
-	decl=EntityDeclaration;
+	decl+=EntityDeclaration*
+	rule+=RuleDeclaration*
+//	msg+=MessageDeclaration*
+;
 
 PackageClause:
 	'package' name=QualifiedName;
@@ -30,16 +33,25 @@ List:
 	{List} "[" items=LiteralList? "]";
 
 WhereExpression:
-	Expression;
+	exp=Expression (emit=Emitter)?;
+
+Emitter:
+	('error' | 'warning' | 'info') ID
+;
 
 QualifiedName:
 	ID (=> '.' ID)*;
 
 Type:
-	TypeName | TypeLiteral;
+	TypeName | 
+	TypeLiteral |
+	'(' Type ')'
+;
 
 TypeName:
-	BasicType | QualifiedName;
+	BasicType |
+	QualifiedName
+;
 
 BasicType:
 	"uint" | "int" | "bool";
@@ -99,6 +111,7 @@ UnaryExpression returns Expression:
 
 PrimaryExpression returns Expression:
 	Literal |
+	QualifiedName ('.' Type)? |
 	UnaryExpression | 
 	'(' LogicalOrExpression ')'
 ;
@@ -132,6 +145,37 @@ PrimaryExpression returns Expression:
 //	//Type:
 ////	name=ID;
 
+
+RuleDeclaration:
+	'rule' name=QualifiedName '{' stmt=RuleStatement '}'
+;
+
+RuleStatement:
+	'using' e=[EntityDeclaration] 'ensure' exp=LogicalOrExpression 'onfail' msg=ID ';'?
+;
+
+
+//MessageDeclaration:
+//	'message' name=QualifiedName '{' msg=MessageStatement '}'
+//;
+//
+//MessageStatement:
+//	s=MessageSeverity
+//	l=MessageLanguage?
+//	c=MessageContent	
+//;
+//
+//MessageSeverity:
+//	'severity' severity=('error'|'warning'|'info'|'debug') ';'
+//;
+//
+//MessageLanguage:
+//	'lang' language=ID ';' 
+//;
+//
+//MessageContent:
+//	'content' content=StringLiteral ';'
+//;
 
 
 LiteralList:
