@@ -2,14 +2,26 @@ package de.fhg.aisec.mark.crypto.base
 
 entity AES isa BlockCipher {
 	
+	/* 
+	 * variables/properties of an AES block cipher
+	 * 
+	 * these relate to abstract concepts/descriptions from technical specifications such as 
+	 * https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf
+	 */
 	var block_size : uint = 128;
-	var key_length : []uint = [128, 192, 256, "abc"];
-	
-	var lkasdf : uint where (123 || true) != 1 && (false) * 1 | 1 + -(1 + 2 * 3) ^ (!a);
+	var key_length : []uint = [128, 192, 256];
 	
 	var key : SecretKey;
 	
-	assert key && key.length in key_length;
+	
+	/*
+	 * invariants that must be true for an instance of an AES block cipher
+	 */
+	 
+	// just naming a variable checks whether it is set
+	// i.e. 'key && key.length in key_length' ensures that a key was set before checking that 
+	// the length of the key is a valid key length supported by AES
+	assert (key && key.length in key_length) onfail IMPROPER_KEY_LENGTH;
 	
 	
 //	op init {
@@ -37,17 +49,3 @@ rule abs {
 	onfail TEST
 }
 
-
-//message TEST {
-//	severity error;
-//	lang en_US;
-//	content "Test
-//sdfsdf
-//
-//sdfsdf
-//
-//sdfsdf
-//sdfs
-//dsdf
-//sdf";
-//}

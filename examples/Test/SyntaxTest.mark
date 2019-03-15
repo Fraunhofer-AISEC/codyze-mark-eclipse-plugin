@@ -1,0 +1,8 @@
+package de.fhg.aisec.mark.crypto.base
+
+entity SyntaxTest isa BlockCipher {
+
+	// just testing expression syntax
+	var lkasdf : uint where (123 || true) != 1 && (false) * 1 | 1 + -(1 + 2 * 3) ^ (!a);
+	
+}
