@@ -27,7 +27,7 @@ VariableDeclaration:
 	'var' name=ID (":" type=Type)? ("=" init=InitializerExpression | "where" where=WhereExpression)? ";";
 
 AssertionDeclaration:
-    'assert' exp=LogicalOrExpression 'onfail' msg=ID ';'
+    'assert' exp=Expression 'onfail' msg=ID ';'
 ;
 
 InitializerExpression:
@@ -66,26 +66,11 @@ TypeLiteral:
 ListType:
 	"[]" Type;
 
+
+
 Expression:
 	LogicalOrExpression
 ;
-//	TerminalExpression ({Operation.left=current} op="+" right=TerminalExpression)*;
-//
-//TerminalExpression returns Expression:
-//	"(" Expression ")" | Literal;
-
-
-//Expression
-//    : UnaryExpr
-////    | expression BINARY_OP expression
-//    | Expression ('||' | '&&' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '+' | '-' | '|' | '^' | '*' | '/' | '%' | '<<' | '>>' | '&' | '&^') Expression
-//    ;
-//
-//UnaryExpr
-//    : primaryExpr
-//    | ('+'|'-'|'!'|'^'|'*'|'&'|'<-') unaryExpr
-//;
-
 
 LogicalOrExpression returns Expression:
 	LogicalAndExpression ({LogicalOrExpression.left=current} op=('||') right=LogicalAndExpression)*
@@ -113,16 +98,21 @@ UnaryExpression:
 
 
 PrimaryExpression returns Expression:
-	Literal |
-	QualifiedName ('.' Type)? |
-	UnaryExpression | 
-	'(' LogicalOrExpression ')'
+	Literal 
+	| Operand 
+	| UnaryExpression 
+	| '(' LogicalOrExpression ')'
+;
+
+Operand:
+    {Operand} operand=OperandName
+;
+
+OperandName:
+    QualifiedName
 ;
 
 
-//BinaryOperator:
-//	"and" | "or";
-//
 //Statement:
 ////	LetStmt | UsingStmt | 
 //	TypeDeclarationStmt;
