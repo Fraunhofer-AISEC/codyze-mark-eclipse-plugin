@@ -27,7 +27,7 @@ VariableDeclaration:
 	'var' name=ID (":" type=Type)? ("=" init=InitializerExpression | "where" where=WhereExpression)? ";";
 
 AssertionDeclaration:
-    'assert' exp=LogicalOrExpression ';'
+    'assert' exp=LogicalOrExpression 'onfail' msg=ID ';'
 ;
 
 InitializerExpression:
@@ -58,7 +58,7 @@ TypeName:
 ;
 
 BasicType:
-	"uint" | "int" | "bool";
+	"uint" | "int" | "bool" | "string";
 
 TypeLiteral:
 	ListType;
