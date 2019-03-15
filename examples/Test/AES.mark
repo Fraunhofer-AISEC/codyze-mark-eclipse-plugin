@@ -4,9 +4,29 @@ entity AES isa BlockCipher {
 	
 	var block_size : uint = 128;
 	var key_length : []uint = [128, 192, 256, "abc"];
-	var blah = [ ];
 	
-	var lkasdf : uint where (123 || true) != 1 && (false) * 1 | 1 + -(1 + 2 * 3);
+	var lkasdf : uint where (123 || true) != 1 && (false) * 1 | 1 + -(1 + 2 * 3) ^ (!a);
+	
+	var key : SecretKey;
+	
+	assert key && key.length in key_length;
+	
+	
+//	op init {
+//		
+//	}
+//	
+//	op process {
+//		
+//	}
+//	
+//	op done {
+//		
+//	}
+//	
+//	op reset {
+//		key = nil;
+//	}
 	
 }
 

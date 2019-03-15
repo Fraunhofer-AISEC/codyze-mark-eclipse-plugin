@@ -1,0 +1,6 @@
+package test
+
+
+entity Key {
+	var length : uint;
+}
