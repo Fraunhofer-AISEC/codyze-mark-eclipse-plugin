@@ -21,10 +21,14 @@ ImportDeclaration:
 	'import' name=QualifiedName;
 
 EntityDeclaration:
-	'entity' name=ID ('isa' superType=[EntityDeclaration])? '{' (content+=VariableDeclaration)* '}';
+	'entity' name=ID ('isa' superType=[EntityDeclaration])? '{' (content+=(VariableDeclaration | AssertionDeclaration))* '}';
 
 VariableDeclaration:
 	'var' name=ID (":" type=Type)? ("=" init=InitializerExpression | "where" where=WhereExpression)? ";";
+
+AssertionDeclaration:
+    'assert' exp=LogicalOrExpression ';'
+;
 
 InitializerExpression:
 	Literal | List;
@@ -84,16 +88,15 @@ Expression:
 
 
 LogicalOrExpression returns Expression:
-	LogicalAndExpression ({LogicalOrExpression.left=current} op='||' right=LogicalAndExpression)*
+	LogicalAndExpression ({LogicalOrExpression.left=current} op=('||') right=LogicalAndExpression)*
 ;
 
-
 LogicalAndExpression returns Expression:
-	ComparisonExpression ({LogicalAndExpression.left=current} op='&&' right=ComparisonExpression)*
+	ComparisonExpression ({LogicalAndExpression.left=current} op=('&&') right=ComparisonExpression)*
 ;
 
 ComparisonExpression returns Expression:
-	AdditionExpression ({ComparisonExpression.left=current} op=('=='|'!='|'<'|'<='|'>'|'>=') right=AdditionExpression)*
+	AdditionExpression ({ComparisonExpression.left=current} op=('=='|'!='|'<'|'<='|'>'|'>='|'in') right=AdditionExpression)*
 ;
 
 AdditionExpression returns Expression:
@@ -104,8 +107,8 @@ MultiplicationExpression returns Expression:
 	PrimaryExpression ({MultiplicationExpression.left=current} op=('*'|'/'|'%'|'<<'|'>>'|'&'|'&^') right=PrimaryExpression)*
 ;
 
-UnaryExpression returns Expression:
-	{UnaryExpression} op=('+'|'-'|'!'|'^'|'*'|'&'|'<-') exp=PrimaryExpression 
+UnaryExpression:
+	op=('+'|'-'|'!'|'^') exp=PrimaryExpression 
 ;
 
 
@@ -179,48 +182,69 @@ RuleStatement:
 
 
 LiteralList:
-	lit+=Literal (',' lit+=Literal)*;
-
-Literal:
-	{IntegerLiteral} value=IntegerLiteral | 
-	{FloatingPointLiteral} value=FloatingPointLiteral | 
-	{BooleanLiteral} value=BooleanLiteral | 
-	{CharacterLiteral} value=CharacterLiteral | 
-	{StringLiteral} value=StringLiteral
+	lit+=Literal (',' lit+=Literal)*
 ;
 
+Literal:
+	{IntegerLiteral} value=IntegerLiteral 
+	| {FloatingPointLiteral} value=FloatingPointLiteral 
+	| {BooleanLiteral} value=BooleanLiteral 
+	| {CharacterLiteral} value=CharacterLiteral 
+	| {StringLiteral} value=StringLiteral
+;
+
+
 IntegerLiteral:
-	INT | HEX;
+	INT	
+	| HEX
+;
 
 FloatingPointLiteral:
-	INT '.' INT;
+	INT '.' INT
+;
 	
 BooleanLiteral:
-	'true' | 'false';
+	'true' 
+	| 'false'
+;
 	
 CharacterLiteral:
-	CHARACTER;
+	CHARACTER
+;
 
 StringLiteral:
-	STRING;
+	STRING
+;
 
+
+
+// Tokens 
 
 terminal HEX:
-	'0x' (HEX_DIGIT)+;
+	'0x' (HEX_DIGIT)+
+;
 
 @Override
 terminal STRING:
-	'"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|"'"|'\\') | !('\\'|'"') )* '"';
+	'"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|"'"|'\\') | !('\\'|'"') )* '"'
+;
 
 terminal CHARACTER:
-	"'" ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|"'"|'\\') | !('\\'|"'") )? "'";
+	"'" ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|"'"|'\\') | !('\\'|"'") )? "'"
+;
 
 terminal fragment HEX_DIGIT:
-	DIGIT | 'a'..'f' | 'A'..'F';
+	DIGIT 
+	| 'a'..'f' 
+	| 'A'..'F'
+;
 
 terminal fragment DIGIT:
-	'0' | NONZERO_DIGIT;
+	'0' 
+	| NONZERO_DIGIT
+;
 
 terminal fragment NONZERO_DIGIT:
-	'1'..'9';
+	'1'..'9'
+;
 
