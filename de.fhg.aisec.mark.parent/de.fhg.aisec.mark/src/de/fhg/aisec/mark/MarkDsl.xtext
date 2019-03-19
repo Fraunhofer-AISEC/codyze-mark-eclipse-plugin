@@ -92,16 +92,24 @@ MultiplicationExpression returns Expression:
 	PrimaryExpression ({MultiplicationExpression.left=current} op=('*'|'/'|'%'|'<<'|'>>'|'&'|'&^') right=PrimaryExpression)*
 ;
 
-UnaryExpression:
-	op=('+'|'-'|'!'|'^') exp=PrimaryExpression 
+/* 
+ * This is a little hack to avoid superfluous UnaryExpression nodes in the EObject AST. 
+ * Now, UnaryExpression nodes are generated only if a unary operator is detected. 
+ * In addition, we prevent expressions like '!!a'. 
+ */
+PrimaryExpression returns Expression:
+	UnaryExpression
+	| SimplifiedPrimaryExpression
 ;
 
+UnaryExpression:
+    op=('+'|'-'|'!'|'^') exp=SimplifiedPrimaryExpression 
+;
 
-PrimaryExpression returns Expression:
-	Literal 
-	| Operand 
-	| UnaryExpression 
-	| '(' LogicalOrExpression ')'
+SimplifiedPrimaryExpression returns Expression:
+    Literal 
+    | Operand 
+    | '(' LogicalOrExpression ')'
 ;
 
 Operand:
