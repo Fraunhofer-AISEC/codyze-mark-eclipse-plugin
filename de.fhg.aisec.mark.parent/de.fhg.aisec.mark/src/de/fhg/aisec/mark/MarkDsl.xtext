@@ -24,7 +24,7 @@ EntityDeclaration:
 	'entity' name=ID ('isa' superType=[EntityDeclaration])? '{' (content+=(VariableDeclaration | AssertionDeclaration))* '}';
 
 VariableDeclaration:
-	'var' name=ID (":" type=Type)? ("=" init=InitializerExpression | "where" where=WhereExpression)? ";";
+	'var' name=ID (':' type=Type)? ('=' init=InitializerExpression | 'where' where=WhereExpression)? ';';
 
 AssertionDeclaration:
     'assert' exp=Expression 'onfail' msg=ID ';'
@@ -34,7 +34,7 @@ InitializerExpression:
 	Literal | List;
 
 List:
-	{List} "[" items=LiteralList? "]";
+	{List} '[' items=LiteralList? ']';
 
 WhereExpression:
 	exp=Expression (emit=Emitter)?;
@@ -58,13 +58,13 @@ TypeName:
 ;
 
 BasicType:
-	"uint" | "int" | "bool" | "string";
+	'uint' | 'int' | 'bool' | 'string';
 
 TypeLiteral:
 	ListType;
 
 ListType:
-	"[]" Type;
+	'[]' Type;
 
 
 
@@ -224,11 +224,11 @@ terminal HEX:
 
 @Override
 terminal STRING:
-	'"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|"'"|'\\') | !('\\'|'"') )* '"'
+	'"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\') | !('\\'|'"') )* '"'
 ;
 
 terminal CHARACTER:
-	"'" ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|"'"|'\\') | !('\\'|"'") )? "'"
+	'\'' ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\') | !('\\'|'\'') )? '\''
 ;
 
 terminal fragment HEX_DIGIT:
