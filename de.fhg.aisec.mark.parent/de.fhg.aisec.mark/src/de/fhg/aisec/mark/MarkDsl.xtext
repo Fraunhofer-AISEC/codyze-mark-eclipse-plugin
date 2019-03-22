@@ -10,6 +10,7 @@ MarkModel:
 	package=PackageClause
 	imports+=ImportDeclaration*
 	decl+=EntityDeclaration*
+	orders+=OrderExpression*
 	rule+=RuleDeclaration*
 //	msg+=MessageDeclaration*
 ;
@@ -120,6 +121,53 @@ OperandName:
     QualifiedName
 ;
 
+
+
+/*
+ * Grammar rules to specify the order of actions/events/operations
+ */
+
+OrderExpression:
+    {OrderExpression} 'order' exp=SequenceExpression ';'
+;
+
+
+SequenceExpression returns OrderExpression:
+    AlternativeExpression ({SequenceExpression.left=current} op=',' right=AlternativeExpression)*
+;
+
+AlternativeExpression returns OrderExpression:
+    TermExpression ({AlternativeExpression.left=current} op='|' right=TermExpression)*
+;
+
+
+ExclusionExpression:
+    op='!' exp=SimplifiedTermExpression
+;
+
+RepetitionExpression returns OrderExpression:
+    SimplifiedTermExpression ({RepetitionExpression.expr=current} op=('?'|'*'|'+'))?
+;
+
+TermExpression returns OrderExpression:
+    ExclusionExpression
+    | RepetitionExpression
+;
+
+
+GroupingExpression returns OrderExpression:
+    '(' SequenceExpression ')'
+;
+
+SimplifiedTermExpression returns OrderExpression:
+    Terminal
+    | GroupingExpression
+;
+
+
+Terminal:
+    {Terminal} t=ID
+;
 
 //Statement:
 ////	LetStmt | UsingStmt | 
