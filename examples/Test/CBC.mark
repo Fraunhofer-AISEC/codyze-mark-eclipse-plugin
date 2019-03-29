@@ -2,6 +2,6 @@ package de.fhg.aisec.mark.crypto.base
 
 entity CBC isa CipherMode {
 	
-	var pad : PaddingScheme where pad.(ESP_Padding) || pad.(PKCS7) error UNRECOGNIZED_PADDING_SCHEME;
+	var pad : PaddingScheme; //where pad.(ESP_Padding) || pad.(PKCS7) error UNRECOGNIZED_PADDING_SCHEME;
 	
 }

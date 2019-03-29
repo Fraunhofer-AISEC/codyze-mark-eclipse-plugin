@@ -1,0 +1,9 @@
+package test
+
+rule abs {
+	using AES
+	ensure 
+		AES.key_length >= 128
+	onfail TEST
+}
+

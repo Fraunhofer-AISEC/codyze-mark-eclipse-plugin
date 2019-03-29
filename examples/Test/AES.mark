@@ -8,8 +8,8 @@ entity AES isa BlockCipher {
 	 * these relate to abstract concepts/descriptions from technical specifications such as 
 	 * https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf
 	 */
-	var block_size : uint = 128;
-	var key_length : []uint = [128, 192, 256];
+	var _block_size : uint = 128;  // default value
+	var _supported_key_length : []uint = [128, 192, 256];
 	
 	var key : SecretKey;
 	
@@ -24,10 +24,10 @@ entity AES isa BlockCipher {
 	assert (key && key.length in key_length) onfail IMPROPER_KEY_LENGTH;
 	
 	
-//	op init {
-//		
-//	}
-//	
+	op init (key) {
+		assert (key.length in key_length) onfail IMPROPER_KEY_LENGTH;	
+	}
+	
 //	op process {
 //		
 //	}
@@ -40,12 +40,5 @@ entity AES isa BlockCipher {
 //		key = nil;
 //	}
 	
-}
-
-
-rule abs {
-	using AES 
-	ensure AES.key_length >= 128 
-	onfail TEST
 }
 
