@@ -12,6 +12,8 @@ MarkModel:
 	decl+=EntityDeclaration*
 	orders+=OrderExpression*
 	rule+=RuleDeclaration*
+	functions+=FunctionExpression*
+	evidence+=EvidenceDeclaration*
 //	msg+=MessageDeclaration*
 ;
 
@@ -45,7 +47,18 @@ Emitter:
 ;
 
 QualifiedName:
-	ID (=> '.' ID)*;
+	ID
+	| JavaQualifiedName
+	| CppQualifiedName
+;
+	
+JavaQualifiedName:
+    ID ('.' ID)+
+;
+
+CppQualifiedName:
+    ID ('::' ID)+
+;
 
 Type:
 	TypeName | 
@@ -169,6 +182,16 @@ Terminal:
     {Terminal} t=ID
 ;
 
+
+
+FunctionExpression:
+    name=QualifiedName '(' (params+=FunctionParameter (',' params+=FunctionParameter)*)? ')'
+;
+
+FunctionParameter:
+    name=ID
+;
+
 //Statement:
 ////	LetStmt | UsingStmt | 
 //	TypeDeclarationStmt;
@@ -201,6 +224,35 @@ RuleDeclaration:
 
 RuleStatement:
 	'using' e=[EntityDeclaration] 'ensure' exp=LogicalOrExpression 'onfail' msg=ID ';'?
+;
+
+
+EvidenceDeclaration:
+    'evidence' name=[EntityDeclaration] '{' (stmts+=EvidenceStatement ';')+ '}'
+;
+
+EvidenceStatement:
+    CallStatement | DeclarationStatement | {EvidenceStatement} ImportStatement
+;
+
+CallStatement:
+    'call' call=FunctionExpression
+;
+
+DeclarationStatement:
+    'decl' decl=QualifiedName
+;
+
+ImportStatement:
+    'incl' (ID | JavaImport | CppInclude) 
+;
+
+JavaImport:
+    ID ('.' ID)+
+;
+
+CppInclude:
+    ID ('/' ID)+ ('.' ID)?
 ;
 
 

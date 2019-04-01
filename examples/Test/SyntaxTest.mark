@@ -12,3 +12,11 @@ entity SyntaxTest isa BlockCipher {
 
 
 order a;
+
+
+evidence AES {
+	call Botan::test(String, _);
+	call Botan::Cipher_Mode::create(algorithm, _);
+	decl Botan::Cipher;
+	incl a/b.hl;
+}

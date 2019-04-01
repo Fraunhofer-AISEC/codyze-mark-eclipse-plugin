@@ -7,3 +7,7 @@ rule abs {
 	onfail TEST
 }
 
+rule Allowed_BlockChiphers {
+  using BlockCipher
+  ensure _typeOf(BlockCipher) == AES
+}
