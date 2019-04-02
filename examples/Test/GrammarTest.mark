@@ -2,3 +2,10 @@ package de.fhg.aisec.mark.crypto.base
 
 
 order a | (a? , !b)* | cit;
+
+javax.crypto.Cipher.getInstance()
+javax.crypto.Cipher.getInstance(a)
+javax.crypto.Cipher.getInstance(b,c,d,_)
+getInstance()
+getInstance(a,_)
+std::cout()

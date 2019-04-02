@@ -7,7 +7,8 @@ entity SyntaxTest isa BlockCipher {
 	
 	var test where a++(!(a+1));
 	
-
+	var key : java:javax.crypto.SecretKey;
+	var key : (cpp:Botan::OctetString | cpp:Botan::SymmetricKey | cpp:std::vector<uint8_t> | cpp:Botan::secure_vector<uint_8>);
 }
 
 
@@ -16,7 +17,17 @@ order a;
 
 evidence AES {
 	call Botan::test(String, _);
-	call Botan::Cipher_Mode::create(algorithm, _);
+	call Botan::Cipher_Mode::create(algorithm, _) 
+		where algorithm in "AES" 
+			&& algorithm like "AES%";
 	decl Botan::Cipher;
 	incl a/b.hl;
 }
+
+evidence AES {
+	call Botan::Cipher_Mode::create(algorithm, _) 
+		where algorithm like "AES_128";
+}
+
+
+OID.1.23.12312312.1

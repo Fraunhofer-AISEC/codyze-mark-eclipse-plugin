@@ -14,6 +14,7 @@ MarkModel:
 	rule+=RuleDeclaration*
 	functions+=FunctionExpression*
 	evidence+=EvidenceDeclaration*
+	oids+=ObjectIdentifier*
 //	msg+=MessageDeclaration*
 ;
 
@@ -67,11 +68,12 @@ Type:
 ;
 
 TypeName:
-	BasicType |
-	QualifiedName
+	BuiltinType 
+	| JavaType 
+	| CppType
 ;
 
-BasicType:
+BuiltinType:
 	'uint' | 'int' | 'bool' | 'string';
 
 TypeLiteral:
@@ -95,7 +97,7 @@ LogicalAndExpression returns Expression:
 ;
 
 ComparisonExpression returns Expression:
-	AdditionExpression ({ComparisonExpression.left=current} op=('=='|'!='|'<'|'<='|'>'|'>='|'in') right=AdditionExpression)*
+	AdditionExpression ({ComparisonExpression.left=current} op=('=='|'!='|'<'|'<='|'>'|'>='|'in'|'like') right=AdditionExpression)*
 ;
 
 AdditionExpression returns Expression:
@@ -236,7 +238,7 @@ EvidenceStatement:
 ;
 
 CallStatement:
-    'call' call=FunctionExpression
+    'call' call=FunctionExpression ('where' cond=WhereExpression)?
 ;
 
 DeclarationStatement:
@@ -277,6 +279,18 @@ CppInclude:
 //MessageContent:
 //	'content' content=StringLiteral ';'
 //;
+
+ObjectIdentifier:
+    ('OID.')? INT ('.' INT)*
+;
+
+JavaType:
+    'java:' JavaQualifiedName
+;
+
+CppType:
+    'cpp:' CppQualifiedName
+;
 
 
 LiteralList:
