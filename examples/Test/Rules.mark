@@ -1,13 +1,53 @@
 package test
 
-rule abs {
-	using AES
-	ensure 
-		AES.key_length >= 128
-	onfail TEST
+/**
+ * MARK-Beispiel für symmetrische Kryptographie (AES) mit Bouncycastle.
+ * 
+ */
+entity javax.crypto.Key isa Key {		// Beispiel für ein MARK-Konzept, das gleichzeitig einem Java-Typ entspricht
+	var key: []uint;
+	var algorithm: String;
+	
+	op create(key, algorithm) {
+		call SecretKeySpec(key, algorithm)  // references the constructor		
+		call this = SecretKeySpec(key, algorithm)  // Alternativ: mit Zuweisung an this (= dieses javax.crypto.Key-Konzept)		
+		
+		// TODO Unklar: Hier wird immer nur mit "call" auf Methodenaufrufe referenziert,  
+		//decl key = generateSomeKey()   ??
+	}
+	
+	op destroy() {
+		call this.destroy()   // Referenz auf this erfordert Zuweisung an this in create()
+	}
 }
 
-rule Allowed_BlockChiphers {
-  using BlockCipher
-  ensure _typeOf(BlockCipher) == AES
+entity MyBouncycastleCipher isa MyCipher {
+	var key : javax.crypto.Key;
+	var algorithm : java.lang.String;		// java.lang.String referenziert den konkreten Java-Typ. Es KANN aber auch ein MARK-Konzept hierfür geben, falls weitere Attribute des String-Typs in den Regeln verwendet würden
+	var mode: int;
+	var parms: java.security.AlgorithmParameters;  // Referenziert den Java-Typ. Keine weitere MARK-Definition hierzu
+	
+	op create(algorithm) {
+		call Cipher.getInstance(algorithm);  // Referenziert Signatur Cipher.getInstance(String) und befüllt die Variable "algorithm"
+	}
+	
+	op init(mode, key, parms) {
+		 call Cipher.init(mode, key, parms);  // Referenziert Signatur Cipher.init(int, javax.crypto.Key, java.security.AlgorithmParameters)
+	}
+	
+	// TODO  update, final
+
+}
+
+rule MyCipherRule {
+	evince SomeCipherIsInitialized		// Ist nur ein Helper für die Analyse und kann später entfernt werden. Analysen starten "eigentlich" an den Methodensignaturen, die in den "op"s der Konzepte beschrieben sind.
+	using MyCipher						// Gilt für MyCipher und alle Subklassen (d.h. MyCipher und MyBouncyCastleCipher)
+	ensure 
+		order create(String algorithm), init(String mode, byte[] key), update()?, final()  // Mapped auf "op"-Operationen des "Cipher"-Konzeptes
+		&& algorithm in [ "AES" ]  // Referenziert "algorithm" der abstrakten "create"-op
+	onfail "Wrong order of operations"
+}
+
+evidence SomeCipherIsInitialized {
+	"Cipher.getInstance("       // Simply tells the analysis to apply to this "TransformationUnit" (=the source file) and attempt to "fill" the concepts (e.g. "MyCipher)
 }
