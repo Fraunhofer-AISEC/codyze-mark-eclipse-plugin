@@ -23,16 +23,19 @@
 			<useDefaultExcludes>true</useDefaultExcludes>
 			<includes>
 				<include>model/**</include>
-				<include>org/eclipse/emf/common/**</include>
+				<!-- <include>org/eclipse/emf/common/**</include>
 				<include>org/eclipse/emf/ecore/**</include>
 				<include>org/eclipse/emf/mwe/**</include>
 				<include>org/eclipse/emf/mwe2/**</include>
 				<include>org/eclipse/xpand2/**</include>
 				<include>org/eclipse/xtend/**</include>
 				<include>org/eclipse/xtend2/**</include>
-				<include>org/eclipse/xtext/**</include>
-				<include>com/google/common/**</include>
+				<include>org/eclipse/xtext/**</include> -->
+				<include>org/**</include>
+				<include>com/**</include>
+				<include>javax/inject/**</include>
                 <include>org/antlr/runtime/**</include>
+                <include>org/apache/**</include>
 			</includes>
 		</fileSet>
 		<fileSet>

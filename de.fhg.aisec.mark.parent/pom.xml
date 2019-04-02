@@ -6,13 +6,18 @@
 	<artifactId>de.fhg.aisec.mark.parent</artifactId>
 	<packaging>pom</packaging>
 
+    
 	<properties>
 		<xtextVersion>2.15.0</xtextVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<!-- Note that XText 2.15 does not support Java 11 yet -->
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		
 		<!-- Tycho settings -->
 		<tycho-version>1.1.0</tycho-version>
+		
 		<!-- Define overridable properties for tycho-surefire-plugin -->
 		<platformSystemProperties></platformSystemProperties>
 		<moduleProperties></moduleProperties>
