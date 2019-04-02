@@ -1,32 +1,20 @@
-package de.fhg.aisec.mark.tests;
+package de.fhg.aisec.mark;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Iterator;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
-import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.mwe.utils.StandaloneSetup;
-import org.eclipse.xtext.XtextRuntimeModule;
-import org.eclipse.xtext.parser.IParseResult;
-import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
-import org.eclipse.xtext.util.StringInputStream;
 
-import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
-
-import de.fhg.aisec.mark.MarkDslStandaloneSetup;
 
 public class XtextParser {
 	
@@ -113,7 +101,8 @@ public class XtextParser {
     	
     	//p.dumpModel();
     	
-    	EObject parse = p.parse("/home/user/projects/bsi-secure-crypto/code/mark-crymlin-eclipse-plugin/examples/Test/CTR.mark");
+    	EObject parse = p.parse("/home/julian/workspace/2018-11-bsi-secure-crypto-lib-tool/code/mark-crymlin-eclipse-plugin/examples/Test/Rules.mark");
+//    	EObject parse = p.parse("/home/user/projects/bsi-secure-crypto/code/mark-crymlin-eclipse-plugin/examples/Test/CTR.mark");
     	dump(parse);
     	
     	p.printResourceList();
