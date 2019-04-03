@@ -14,11 +14,11 @@ cache:
 build:
   stage: build
   script:
-    - mvn $MAVEN_CLI_OPTS package
+    - mvn $MAVEN_CLI_OPTS install
 
-test:
-  stage: test
+deploy:
+  stage: deploy
   script:
-    - mvn $MAVEN_CLI_OPTS test
+    - mvn $MAVEN_CLI_OPTS deploy
 
 
