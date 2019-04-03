@@ -25,7 +25,7 @@ ImportDeclaration:
 	'import' name=QualifiedName;
 
 EntityDeclaration:
-	'entity' name=ID ('isa' superType=[EntityDeclaration])? '{' (content+=(VariableDeclaration | AssertionDeclaration))* '}';
+	'entity' name=QualifiedName ('isa' superType=[EntityDeclaration])? '{' (content+=(VariableDeclaration | AssertionDeclaration | OpDeclaration))* '}';
 
 VariableDeclaration:
 	'var' name=ID (':' type=Type)? ('=' init=InitializerExpression | 'where' where=WhereExpression)? ';';
@@ -234,19 +234,19 @@ EvidenceDeclaration:
 ;
 
 EvidenceStatement:
-    CallStatement | DeclarationStatement | {EvidenceStatement} ImportStatement
+    CallStatement | DeclarationStatement | ImportStatement
 ;
 
 CallStatement:
-    'call' call=FunctionExpression ('where' cond=WhereExpression)?
+    'call' (res=ID '=')? call=FunctionExpression ('where' cond=WhereExpression)?
 ;
 
 DeclarationStatement:
-    'decl' decl=QualifiedName
+    'decl' (res=ID '=')? decl=QualifiedName
 ;
 
 ImportStatement:
-    'incl' (ID | JavaImport | CppInclude) 
+    'incl' name=(ID | JavaImport | CppInclude)
 ;
 
 JavaImport:
@@ -257,6 +257,14 @@ CppInclude:
     ID ('/' ID)+ ('.' ID)?
 ;
 
+
+OpDeclaration:
+    'op' name=ID '(' (params+=ID (',' params+=ID)*)? ')' '{' (stmts+=OpStatement)* '}'
+;
+
+OpStatement:
+    (CallStatement | DeclarationStatement | ImportStatement) ';'
+;
 
 //MessageDeclaration:
 //	'message' name=QualifiedName '{' msg=MessageStatement '}'

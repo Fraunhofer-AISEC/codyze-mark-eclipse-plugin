@@ -6,26 +6,26 @@ package test
  */
 entity javax.crypto.Key isa Key {		// Beispiel für ein MARK-Konzept, das gleichzeitig einem Java-Typ entspricht
 	var key: []uint;
-	var algorithm: String;
+	var algorithm: java:java.lang.String;
 	
 	op create(key, algorithm) {
-		call SecretKeySpec(key, algorithm)  // references the constructor		
-		call this = SecretKeySpec(key, algorithm)  // Alternativ: mit Zuweisung an this (= dieses javax.crypto.Key-Konzept)		
+		call SecretKeySpec(key, algorithm);  // references the constructor		
+		call this = SecretKeySpec(key, algorithm);			  // Alternativ: mit Zuweisung an this (= dieses javax.crypto.Key-Konzept)		
 		
 		// TODO Unklar: Hier wird immer nur mit "call" auf Methodenaufrufe referenziert,  
 		//decl key = generateSomeKey()   ??
 	}
 	
 	op destroy() {
-		call this.destroy()   // Referenz auf this erfordert Zuweisung an this in create()
+		call this.destroy();   // Referenz auf this erfordert Zuweisung an this in create()
 	}
 }
 
 entity MyBouncycastleCipher isa MyCipher {
-	var key : javax.crypto.Key;
-	var algorithm : java.lang.String;		// java.lang.String referenziert den konkreten Java-Typ. Es KANN aber auch ein MARK-Konzept hierfür geben, falls weitere Attribute des String-Typs in den Regeln verwendet würden
+	var key : java:javax.crypto.Key;
+	var algorithm : java:java.lang.String;		// java.lang.String referenziert den konkreten Java-Typ. Es KANN aber auch ein MARK-Konzept hierfür geben, falls weitere Attribute des String-Typs in den Regeln verwendet würden
 	var mode: int;
-	var parms: java.security.AlgorithmParameters;  // Referenziert den Java-Typ. Keine weitere MARK-Definition hierzu
+	var parms: java:java.security.AlgorithmParameters;  // Referenziert den Java-Typ. Keine weitere MARK-Definition hierzu
 	
 	op create(algorithm) {
 		call Cipher.getInstance(algorithm);  // Referenziert Signatur Cipher.getInstance(String) und befüllt die Variable "algorithm"
