@@ -1,0 +1,30 @@
+package botan
+
+
+entity javax.crypto.Cipher isa Cipher {
+	
+	
+	
+	op create(algorithm) {
+		call Botan::get_cipher_mode();
+		call Botan::CipherMode::create();
+		call Botan::CipherMode::create_or_throw(); 
+	}
+	
+	op init() {
+		call Cipher.init();
+	}
+	
+	op process() {
+		call Cipher.update();
+	}
+	
+	op finish() {
+		call Cipher.doFinal();
+	}
+	
+	op reset() {
+		
+	}
+	
+}

@@ -1,0 +1,73 @@
+package botan
+
+
+entity Botan::CipherMode isa Cipher {
+	
+	var algorithm : cpp:std::String;
+	var direction : cpp:Botan::Cipher_Dir;
+	var provider : cpp:std::String;
+	var key : cpp:Botan::SymmetricKey;
+	var iv : cpp:Botan::InitializationVector;
+	//var ttt : cpp:Botan::secure_vector<uint8_t>;
+	
+	op create(algorithm) {
+		//
+		call Botan::get_cipher_mode(algorithm, direction);
+		call Botan::get_cipher_mode(algorithm, direction, provider);
+		//
+		call Botan::CipherMode::create(algorithm, direction);
+		call Botan::CipherMode::create(algorithm, direction, provider);
+		//
+		call Botan::CipherMode::create_or_throw(algorithm, direction);
+		call Botan::CipherMode::create_or_throw(algorithm, direction, provider); 
+	}
+	
+	op init() {
+		call Botan::CipherMode::set_key(key);
+	}
+	
+	op start() {
+		 call Botan::CipherMode::start(iv);
+	}
+	
+//	op process() {
+//		call Botan::CipherMode::update(input);
+//
+//	}
+	
+	op finish() {
+		call Botan::CipherMode::final(_);
+//		call Botan::CipherMode::final();
+//		call Botan::CipherMode::final();
+	}
+	
+	op reset() {
+		call Botan::CipherMode::reset();
+	}
+	
+	order create, init, start, /*process*,*/ finish, reset?;
+	
+}
+
+
+rule BlockCiphers {
+	for Botan_CipherMode 
+	ensure
+		_part(0, "/", algorithm) in [ "AES" ]
+	onfail BLUB
+}
+
+rule UseRandomIV {
+	for Botan_CipherMode
+	when _part(1, "/", algorithm) == "CBC"
+	ensure
+		_def(iv, Botan_AutoSeededRNG.generate());
+}
+
+
+//rule OnlyAES_256 {
+//	for Botan_CipherMode
+//	when _part(1, "/", algorithm) == "AES"
+//	ensure
+//		_length(key) == 256;
+//}
