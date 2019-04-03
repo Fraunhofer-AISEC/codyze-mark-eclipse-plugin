@@ -9,7 +9,7 @@
 	 <distributionManagement>
 	   <repository>
 	     <id>netsec</id>
-	     <name>http://repository.netsec.aisec.fraunhofer.de</name>
+	     <name>Netsec Snapshots</name>
 	     <url>http://repository.netsec.aisec.fraunhofer.de/repository/snapshots</url>
 	   </repository>
 	 </distributionManagement>
