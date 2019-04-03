@@ -16,6 +16,9 @@ Do not let all the files confuse you. There are only two essential files:
 
 # How to build
 
+Note that XText 2.15 does not yet support Java 11. You have to use Java 10!
+https://github.com/eclipse/xtext/issues/1316
+
 ## With Maven
 
 If you are a build server, you may simply run Maven in the `de.fhg.aisec.mark.parent` project:
