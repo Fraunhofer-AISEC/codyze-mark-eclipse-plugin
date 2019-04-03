@@ -8,7 +8,7 @@
 	</parent>
 	<artifactId>de.fhg.aisec.mark</artifactId>
 	<packaging>eclipse-plugin</packaging>
-
+	 
 	<build>
 		<plugins>
 			<plugin>

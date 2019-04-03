@@ -6,6 +6,13 @@
 	<artifactId>de.fhg.aisec.mark.parent</artifactId>
 	<packaging>pom</packaging>
 
+	 <distributionManagement>
+	   <repository>
+	     <id>netsec</id>
+	     <name>http://repository.netsec.aisec.fraunhofer.de</name>
+	     <url>http://repository.netsec.aisec.fraunhofer.de/repository/snapshots</url>
+	   </repository>
+	 </distributionManagement>
     
 	<properties>
 		<xtextVersion>2.17.0</xtextVersion>
