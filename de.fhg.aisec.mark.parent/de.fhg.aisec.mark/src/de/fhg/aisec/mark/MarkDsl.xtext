@@ -25,7 +25,7 @@ ImportDeclaration:
 	'import' name=QualifiedName;
 
 EntityDeclaration:
-	'entity' name=QualifiedName ('isa' superType=[EntityDeclaration])? '{' (content+=(VariableDeclaration | AssertionDeclaration | OpDeclaration))* '}';
+	'entity' name=QualifiedName ('isa' superType=[EntityDeclaration])? '{' (content+=(VariableDeclaration | AssertionDeclaration | OpDeclaration | OrderExpression))* '}';
 
 VariableDeclaration:
 	'var' name=ID (':' type=Type)? ('=' init=InitializerExpression | 'where' where=WhereExpression)? ';';
@@ -58,7 +58,7 @@ JavaQualifiedName:
 ;
 
 CppQualifiedName:
-    ID ('::' ID)+
+    ID ('::' ID)+ 
 ;
 
 Type:
