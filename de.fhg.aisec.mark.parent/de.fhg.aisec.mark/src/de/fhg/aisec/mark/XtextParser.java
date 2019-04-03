@@ -16,6 +16,8 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import de.fhg.aisec.mark.markDsl.MarkModel;
+
 public class XtextParser {
 	
 	@Inject
@@ -28,6 +30,7 @@ public class XtextParser {
     private void setupParser() {        
     	StandaloneSetup saS = new org.eclipse.emf.mwe.utils.StandaloneSetup();
     	saS.setPlatformUri("../");
+    	saS.setScanClassPath(false);
     	
         Injector injector = new MarkDslStandaloneSetup().createInjectorAndDoEMFRegistration();
         injector.injectMembers(this);
@@ -81,12 +84,15 @@ public class XtextParser {
     }
 
     
-    public EObject parse(String f) {
-        Resource resource = resourceSet.getResource(URI.createFileURI(f), true);
+    public MarkModel parse(File markFile) {
+    	Resource resource = resourceSet.getResource(URI.createFileURI(markFile.getAbsolutePath()), true);
         EcoreUtil.resolveAll(resource);
-        return resource.getContents().get(0);
+        return (MarkModel) resource.getContents().get(0);
     }
     
+    /**
+     * Just for testing.
+     */
     public static void main(String... args) throws IOException {
     	XtextParser p = new XtextParser();
     	
@@ -101,7 +107,7 @@ public class XtextParser {
     	
     	//p.dumpModel();
     	
-    	EObject parse = p.parse("/home/julian/workspace/2018-11-bsi-secure-crypto-lib-tool/code/mark-crymlin-eclipse-plugin/examples/Test/Rules.mark");
+    	EObject parse = p.parse(new File("/home/julian/workspace/2018-11-bsi-secure-crypto-lib-tool/code/mark-crymlin-eclipse-plugin/examples/Test/Rules.mark"));
 //    	EObject parse = p.parse("/home/user/projects/bsi-secure-crypto/code/mark-crymlin-eclipse-plugin/examples/Test/CTR.mark");
     	dump(parse);
     	
