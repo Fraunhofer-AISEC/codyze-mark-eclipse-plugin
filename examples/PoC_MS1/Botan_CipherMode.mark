@@ -8,8 +8,9 @@ entity Botan::Cipher_Mode isa Cipher {
 	var provider : cpp:std::String;
 	var key : cpp:Botan::SymmetricKey;
 	var iv : cpp:Botan::InitializationVector;
-	var input : *;
-	//var ttt : cpp:Botan::secure_vector<uint8_t>;
+	var input : cpp:_::_;  // e.g. Botan::secure_vector<uint8_t>
+	var input_length : cpp:std::size_t;
+	
 	
 	op create(algorithm) {
 		call Botan::get_cipher_mode(algorithm, direction);
@@ -37,14 +38,15 @@ entity Botan::Cipher_Mode isa Cipher {
 	}
 	
 	op process() {
-		call Botan::Cipher_Mode::process(input, size_t);
+		call Botan::Cipher_Mode::process(input, input_length);
+		
 		call Botan::Cipher_Mode::update(input);
 		call Botan::Cipher_Mode::update(input, size_t);
 	}
 	
 	op finish() {
-		call Botan::Cipher_Mode::finish(Botan::secure_vector<uint8_t>&);
-		call Botan::Cipher_Mode::finish(Botan::secure_vector<uint8_t>&, size_t);
+		call Botan::Cipher_Mode::finish(input); // Botan::secure_vector<uint8_t>&
+		call Botan::Cipher_Mode::finish(input, size_t); // Botan::secure_vector<uint8_t>&
 	}
 	
 	op reset() {
@@ -57,17 +59,18 @@ entity Botan::Cipher_Mode isa Cipher {
 
 
 rule BlockCiphers {
-	for Botan_CipherMode 
+	for Botan::Cipher_Mode 
 	ensure
-		_part(0, "/", algorithm) in [ "AES" ]
-	onfail BLUB
+		_split(algorithm, "/", 0) in [ "AES" ]
+	onfail WrongBlockCipher
 }
 
 rule UseRandomIV {
-	for Botan_CipherMode
-	when _part(1, "/", algorithm) == "CBC"
+	for Botan::Cipher_Mode
+	when _split(algorithm, "/", 1) == "CBC"
 	ensure
-		_def(iv, Botan_AutoSeededRNG.generate());
+		_def(iv, Botan_AutoSeededRNG.generate())
+	onfail NoRandomIV
 }
 
 
@@ -75,5 +78,5 @@ rule UseRandomIV {
 //	for Botan_CipherMode
 //	when _part(1, "/", algorithm) == "AES"
 //	ensure
-//		_length(key) == 256;
+//		_length(key) == 256
 //}

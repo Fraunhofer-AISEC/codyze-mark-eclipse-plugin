@@ -1,5 +1,6 @@
 package botan
 
+
 entity Botan::SymmetricKey {
 	var value;
 	var length : uint;

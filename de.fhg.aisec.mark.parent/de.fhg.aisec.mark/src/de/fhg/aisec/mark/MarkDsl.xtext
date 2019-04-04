@@ -126,6 +126,7 @@ SimplifiedPrimaryExpression returns Expression:
     Literal 
     | Operand 
     | FunctionCallExpression 
+    | LiteralListExpression 
     | '(' LogicalOrExpression ')'
 ;
 
@@ -137,6 +138,10 @@ OperandName:
     QualifiedName
 ;
 
+
+LiteralListExpression:
+    '[' values+=Literal (',' values+=Literal)* ']'
+;
 
 
 /*
@@ -233,7 +238,7 @@ RuleDeclaration:
 ;
 
 RuleStatement:
-	'for' entity=[EntityDeclaration|QualifiedName] (cond=ConditionStatement)? ensure=EnsureStatement 'onfail' msg=ID ';'
+	'for' entity=[EntityDeclaration|QualifiedName] (cond=ConditionStatement)? ensure=EnsureStatement 'onfail' msg=ID
 ;
 
 ConditionStatement:

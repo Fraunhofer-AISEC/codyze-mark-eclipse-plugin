@@ -1,10 +1,10 @@
 package botan
 
-entity Botan_AutoSeededRNG isa RandomSource {
+
+entity Botan::AutoSeededRNG isa RandomSource {
 
 	op generate() {
 		call Botan::AutoSeededRNG::random_vec(_);
 	}
-	
 	
 }
