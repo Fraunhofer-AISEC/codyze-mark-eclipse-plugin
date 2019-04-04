@@ -9,7 +9,15 @@
 	<artifactId>de.fhg.aisec.mark</artifactId>
 	<packaging>eclipse-plugin</packaging>
 	 
-	<build>
+	<distributionManagement>
+	   <repository>
+	     <id>netsec</id>
+	     <name>Netsec Snapshots</name>
+	     <url>http://repository.netsec.aisec.fraunhofer.de/repository/snapshots</url>
+	   </repository>
+	 </distributionManagement>
+
+	 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -154,8 +162,16 @@
 					</execution>
 				</executions>
 		</plugin>
-
-
+		<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-deploy-plugin</artifactId>
+			    <executions>
+			        <execution>
+			            <id>default-deploy</id>
+			            <phase>deploy</phase>
+			        </execution>
+			    </executions>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
