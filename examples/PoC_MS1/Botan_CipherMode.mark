@@ -105,7 +105,7 @@ rule BlockCiphers {
 
 rule UseRandomIV {
 	for Botan::Cipher_Mode
-	when _split(algorithm, "/", 1) == "CBC"
+	when _split(algorithm, "/", 1) == "CBC" && direction == Botan::Cipher_Dir::ENCRYPTION
 	ensure
 		_def(iv, Botan_AutoSeededRNG.generate())
 	onfail NoRandomIV
