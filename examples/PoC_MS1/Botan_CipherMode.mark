@@ -4,15 +4,23 @@ package botan
 entity Botan::Cipher_Mode isa Cipher {
 	
 	var algorithm : cpp:std::String;
-	var direction : cpp:Botan::Cipher_Dir;
+	var direction : cpp:Botan::Cipher_Dir; // an enum of underlying type int
 	var provider : cpp:std::String;
-	var key : cpp:Botan::SymmetricKey;
-	var iv : cpp:Botan::InitializationVector;
+	var key : cpp:Botan::SymmetricKey; // aka Botan::OctetString; class wrapping Botan::secure_vector<T, secure_allocator<T>>; secure_vector<> scrubs memory on deallocate()
+	var iv : cpp:Botan::InitializationVector; // aka Botan::OctetString; class wrapping Botan::secure_vector<T, secure_allocator<T>>; secure_vector<> scrubs memory on deallocate()
 	var input : cpp:_::_;  // e.g. Botan::secure_vector<uint8_t>
 	var input_length : cpp:std::size_t;
 	
 	
 	op create(algorithm) {
+		/*
+		 * method call(s):
+		 * - static std::unique_ptr<Cipher_Mode> create(const std::string& algo, Cipher_Dir direction, const std::string& provider = "")
+		 * - static std::unique_ptr<Cipher_Mode> create_or_throw(const std::string& algo, Cipher_Dir direction, const std::string& provider = "")
+		 * 
+		 * function call(s):
+		 * - Cipher_Mode* get_cipher_mode(const std::string& algo_spec, Cipher_Dir direction, const std::string& provider = "")
+		 */
 		call Botan::get_cipher_mode(algorithm, direction);
 		call Botan::get_cipher_mode(algorithm, direction, provider);
 
@@ -26,11 +34,27 @@ entity Botan::Cipher_Mode isa Cipher {
 	}
 	
 	op init() {
+		/*
+		 * method call(s) inherited from Botan::SymmetricAlgorithm:
+		 * - void set_key(const SymmetricKey& key)
+		 * - template<typename Alloc>
+		 *   void set_key(const std::vector<uint8_t, Alloc>& key)
+		 * - void set_key(const uint8_t key[], size_t length);
+		 */
 		call Botan::Cipher_Mode::set_key(key);
 		//forbidden call Botan::Cipher_Mode::set_key(const uint8_t[], size_t)
 	}
 	
 	op start() {
+		/* 
+		 * method call(s):
+		 * - template<typename Alloc>
+		 *   void start(const std::vector<uint8_t, Alloc>& nonce)
+		 * - void start(const uint8_t nonce[], size_t nonce_len)
+		 * - void start()
+		 * 
+		 * - virtual void start_msg(const uint8_t nonce[], size_t nonce_len) = 0;
+		 */
     	// forbidden: call Botan::Cipher_Mode::start();
 		call Botan::Cipher_Mode::start(iv);
 		// forbidden: call Botan::Cipher_Mode::start(const uint8_t[], size_t);
@@ -38,6 +62,12 @@ entity Botan::Cipher_Mode isa Cipher {
 	}
 	
 	op process() {
+		/*
+		 * method call(s): 
+		 * - void update(secure_vector<uint8_t>& buffer, size_t offset = 0)
+		 * 
+		 * - virtual size_t process(uint8_t msg[], size_t msg_len) = 0;
+		 */
 		call Botan::Cipher_Mode::process(input, input_length);
 		
 		call Botan::Cipher_Mode::update(input);
@@ -45,11 +75,19 @@ entity Botan::Cipher_Mode isa Cipher {
 	}
 	
 	op finish() {
-		call Botan::Cipher_Mode::finish(input); // Botan::secure_vector<uint8_t>&
-		call Botan::Cipher_Mode::finish(input, size_t); // Botan::secure_vector<uint8_t>&
+		/*
+		 * method call(s):
+		 * - virtual void finish(secure_vector<uint8_t>& final_block, size_t offset = 0) = 0;
+		 */
+		call Botan::Cipher_Mode::finish(input);
+		call Botan::Cipher_Mode::finish(input, size_t);
 	}
 	
 	op reset() {
+		/*
+		 * method call(s):
+		 * - virtual void reset() = 0;
+		 */
 		call Botan::Cipher_Mode::reset();
 	}
 	
