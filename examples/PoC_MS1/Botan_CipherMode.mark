@@ -1,48 +1,54 @@
 package botan
 
 
-entity Botan::CipherMode isa Cipher {
+entity Botan::Cipher_Mode isa Cipher {
 	
 	var algorithm : cpp:std::String;
 	var direction : cpp:Botan::Cipher_Dir;
 	var provider : cpp:std::String;
 	var key : cpp:Botan::SymmetricKey;
 	var iv : cpp:Botan::InitializationVector;
+	var input : *;
 	//var ttt : cpp:Botan::secure_vector<uint8_t>;
 	
 	op create(algorithm) {
-		//
 		call Botan::get_cipher_mode(algorithm, direction);
 		call Botan::get_cipher_mode(algorithm, direction, provider);
-		//
-		call Botan::CipherMode::create(algorithm, direction);
-		call Botan::CipherMode::create(algorithm, direction, provider);
-		//
-		call Botan::CipherMode::create_or_throw(algorithm, direction);
-		call Botan::CipherMode::create_or_throw(algorithm, direction, provider); 
+
+		/* this is only for botan version >= 2.6.0  
+		call Botan::Cipher_Mode::create(algorithm, direction);
+		call Botan::Cipher_Mode::create(algorithm, direction, provider);
+	
+		call Botan::Cipher_Mode::create_or_throw(algorithm, direction);
+		call Botan::Cipher_Mode::create_or_throw(algorithm, direction, provider); 
+		*/
 	}
 	
 	op init() {
-		call Botan::CipherMode::set_key(key);
+		call Botan::Cipher_Mode::set_key(key);
+		//forbidden call Botan::Cipher_Mode::set_key(const uint8_t[], size_t)
 	}
 	
 	op start() {
-		 call Botan::CipherMode::start(iv);
+    	// forbidden: call Botan::Cipher_Mode::start();
+		call Botan::Cipher_Mode::start(iv);
+		// forbidden: call Botan::Cipher_Mode::start(const uint8_t[], size_t);
+		// forbidden: call Botan::Cipher_Mode::start_msg(const uint8_t[], size_t);
 	}
 	
-//	op process() {
-//		call Botan::CipherMode::update(input);
-//
-//	}
+	op process() {
+		call Botan::Cipher_Mode::process(input, size_t);
+		call Botan::Cipher_Mode::update(input);
+		call Botan::Cipher_Mode::update(input, size_t);
+	}
 	
 	op finish() {
-		call Botan::CipherMode::final(_);
-//		call Botan::CipherMode::final();
-//		call Botan::CipherMode::final();
+		call Botan::Cipher_Mode::finish(Botan::secure_vector<uint8_t>&);
+		call Botan::Cipher_Mode::finish(Botan::secure_vector<uint8_t>&, size_t);
 	}
 	
 	op reset() {
-		call Botan::CipherMode::reset();
+		call Botan::Cipher_Mode::reset();
 	}
 	
 	order create, init, start, /*process*,*/ finish, reset?;
