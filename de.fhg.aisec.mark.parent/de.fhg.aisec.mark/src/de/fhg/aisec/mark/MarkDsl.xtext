@@ -125,6 +125,7 @@ UnaryExpression:
 SimplifiedPrimaryExpression returns Expression:
     Literal 
     | Operand 
+    | FunctionCallExpression 
     | '(' LogicalOrExpression ')'
 ;
 
@@ -184,6 +185,13 @@ Terminal:
     {Terminal} t=ID
 ;
 
+FunctionCallExpression:
+    name=QualifiedName '(' (args+=Argument (',' args+=Argument)*)? ')'
+;
+
+Argument:
+    LogicalOrExpression
+;
 
 
 FunctionExpression:
@@ -221,12 +229,22 @@ FunctionParameter:
 
 
 RuleDeclaration:
-	'rule' name=QualifiedName '{' stmt=RuleStatement '}'
+	'rule' name=ID '{' stmt=RuleStatement '}'
 ;
 
 RuleStatement:
-	'using' e=[EntityDeclaration] 'ensure' exp=LogicalOrExpression 'onfail' msg=ID ';'?
+	'for' entity=[EntityDeclaration|QualifiedName] (cond=ConditionStatement)? ensure=EnsureStatement 'onfail' msg=ID ';'
 ;
+
+ConditionStatement:
+    'when' exp=LogicalOrExpression
+;
+
+
+EnsureStatement:
+    'ensure' exp=LogicalOrExpression
+;
+
 
 
 EvidenceDeclaration:
