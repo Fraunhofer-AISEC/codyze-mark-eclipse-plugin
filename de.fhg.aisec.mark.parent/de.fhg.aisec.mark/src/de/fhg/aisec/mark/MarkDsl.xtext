@@ -25,7 +25,7 @@ ImportDeclaration:
 	'import' name=QualifiedName;
 
 EntityDeclaration:
-	'entity' name=QualifiedName ('isa' superType=[EntityDeclaration])? '{' (content+=(VariableDeclaration | AssertionDeclaration | OpDeclaration | OrderExpression))* '}';
+	'entity' name=QualifiedName ('isa' superType=[EntityDeclaration|QualifiedName])? '{' (content+=(VariableDeclaration | AssertionDeclaration | OpDeclaration | OrderExpression))* '}';
 
 VariableDeclaration:
 	'var' name=ID (':' type=Type)? ('=' init=InitializerExpression | 'where' where=WhereExpression)? ';';
@@ -62,26 +62,19 @@ CppQualifiedName:
 ;
 
 Type:
-	TypeName | 
-	TypeLiteral |
-	'(' Type ')'
+    UniversalType 
 ;
 
-TypeName:
-	BuiltinType 
-	| JavaType 
-	| CppType
+/*
+ * This type rule at least enforces that users cannot mix Java and C++ style qualified name separator
+ */
+UniversalType:
+    ID (('.' ID)* | ('::' ID)*) (Template)? ('*' | '&' | '[]')?
 ;
 
-BuiltinType:
-	'uint' | 'int' | 'bool' | 'string';
-
-TypeLiteral:
-	ListType;
-
-ListType:
-	'[]' Type;
-
+Template:
+    '<' Type '>'
+;
 
 
 Expression:
@@ -315,13 +308,6 @@ ObjectIdentifier:
     ('OID.')? INT ('.' INT)*
 ;
 
-JavaType:
-    'java:' JavaQualifiedName
-;
-
-CppType:
-    'cpp:' CppQualifiedName
-;
 
 
 LiteralList:

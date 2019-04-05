@@ -25,7 +25,7 @@ entity AES isa BlockCipher {
 	
 	
 	op init (key) {
-		assert (key.length in key_length) onfail IMPROPER_KEY_LENGTH;	
+//		assert (key.length in key_length) onfail IMPROPER_KEY_LENGTH;	
 	}
 	
 //	op process {

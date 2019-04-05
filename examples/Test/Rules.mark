@@ -6,7 +6,7 @@ package test
  */
 entity javax.crypto.Key isa Key {		// Beispiel für ein MARK-Konzept, das gleichzeitig einem Java-Typ entspricht
 	var key: []uint;
-	var algorithm: java:java.lang.String;
+	var algorithm: java.lang.String;
 	
 	op create(key, algorithm) {
 		call SecretKeySpec(key, algorithm);  // references the constructor		
@@ -22,10 +22,10 @@ entity javax.crypto.Key isa Key {		// Beispiel für ein MARK-Konzept, das gleich
 }
 
 entity MyBouncycastleCipher isa MyCipher {
-	var key : java:javax.crypto.Key;
-	var algorithm : java:java.lang.String;		// java.lang.String referenziert den konkreten Java-Typ. Es KANN aber auch ein MARK-Konzept hierfür geben, falls weitere Attribute des String-Typs in den Regeln verwendet würden
+	var key : javax.crypto.Key;
+	var algorithm : java.lang.String;		// java.lang.String referenziert den konkreten Java-Typ. Es KANN aber auch ein MARK-Konzept hierfür geben, falls weitere Attribute des String-Typs in den Regeln verwendet würden
 	var mode: int;
-	var parms: java:java.security.AlgorithmParameters;  // Referenziert den Java-Typ. Keine weitere MARK-Definition hierzu
+	var parms: java.security.AlgorithmParameters;  // Referenziert den Java-Typ. Keine weitere MARK-Definition hierzu
 	
 	op create(algorithm) {
 		call Cipher.getInstance(algorithm);  // Referenziert Signatur Cipher.getInstance(String) und befüllt die Variable "algorithm"

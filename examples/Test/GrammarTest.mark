@@ -2,16 +2,16 @@ package de.fhg.aisec.mark.crypto.base
 
 
 entity test::sa {
-	
+	var t : Botan::secure_vector<Botan::secure_vector<int>>&; // C++ templates, basic type modifiers (signed/unsigned, short/long/long long)
 }
 
 rule ab {
 	for test::sa
 	ensure a+b
-	onfail a;
+	onfail a
 }
 
-order a | (a? , !b)* | cit;
+//order a | (a? , !b)* | cit;
 
 javax.crypto.Cipher.getInstance()
 javax.crypto.Cipher.getInstance(a)
