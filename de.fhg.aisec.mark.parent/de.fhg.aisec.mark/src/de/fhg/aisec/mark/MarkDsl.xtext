@@ -10,7 +10,7 @@ MarkModel:
 	package=PackageClause
 //	imports+=ImportDeclaration*
 	/* either an entity or a rule, multiple per file and in arbitrary order */
-	( decl+=EntityDeclaration | rule+=RuleDeclaration )*
+	( decl+=EntityDeclaration | rule+=RuleDeclaration )+
 	/*
 	orders+=OrderExpression*
 	functions+=FunctionExpression*
@@ -78,7 +78,7 @@ Type:
  * This type rule at least enforces that users cannot mix Java and C++ style qualified name separator
  */
 UniversalType:
-    ID (('.' ID)* | ('::' ID)*) (Template)? ('*' | '&' | '[]')?
+    ID (('.' ID)+ | ('::' ID)+)? (Template)? ('*' | '&' | '[]')?
 ;
 
 Template:
@@ -151,7 +151,7 @@ LiteralListExpression:
  */
 
 OrderExpression:
-    {OrderExpression} 'order' exp=SequenceExpression ';'
+    {OrderExpression} 'order' exp=SequenceExpression
 ;
 
 
@@ -193,7 +193,7 @@ Terminal:
 ;
 
 FunctionCallExpression:
-    name=QualifiedName '(' (args+=Argument (',' args+=Argument)*)? ')'
+    name=QualifiedName ( '()' | '(' (args+=Argument (',' args+=Argument)*)? ')' )
 ;
 
 Argument:

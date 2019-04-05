@@ -4,11 +4,17 @@ package jca
 entity javax.crypto.Cipher isa Cipher {
 	
 	var transformation : java.lang.String;
-	var provider : java.lang.String;
+	var provider : java.security.Provider;
+	var providerAsString : java.lang.String;
+	
+	
 	var direction : int;
-	var paramSpec : AlgorithmParameterSpec params;
+	var key : java.security.Key;
+	var params : java.security.spec.AlgorithmParameters;
+	var paramSpec : java.security.spec.AlgorithmParameterSpec;
+	var random : java.security.SecureRandom;
 
-	op create(algorithm) {
+	op create() {
 		/*
 		 * static Cipher getInstance(String transformation)
 		 * static Cipher getInstance(String transformation, Provider provider)
@@ -16,6 +22,7 @@ entity javax.crypto.Cipher isa Cipher {
 		 */
 		call Cipher.getInstance(transformation);
 		call Cipher.getInstance(transformation, provider);
+		call Cipher.getInstance(transformation, providerAsString);
 	}
 	
 	op init() {
@@ -30,9 +37,9 @@ entity javax.crypto.Cipher isa Cipher {
 		 * void init(int opmode, Key key, SecureRandom random)
 		 */
 		call Cipher.init(direction, key);
-		call Cipher.init(direction, key, random);
 		call Cipher.init(direction, key, paramSpec);
 		call Cipher.init(direction, key, paramSpec, random);
+		call Cipher.init(direction, key, random);
 	}
 	
 	op process() {
@@ -59,34 +66,36 @@ entity javax.crypto.Cipher isa Cipher {
 		call Cipher.doFinal(_, _);
 	}
 	
-	order create, init, process?, finish
-	
 }
 
 rule BlockCiphers {
-	for javax.crypto.Cipher
+	for javax.crypto.Cipher as c
 	ensure
-		_split(algorithm, "/", 0) in [ "AES" ]  // TODO Nicetohave: Vordefinierte Methoden highlighten
+		_split(c.transformation, "/", 0) in [ "AES" ]  // TODO Nicetohave: Vordefinierte Methoden highlighten
 	onfail WrongBlockCipher
+}
+
+rule UseBouncyCastle {
+	for javax.crypto.Cipher as c
+	ensure 
+		c.provider in [ "BC" ]
+	onfail NoBouncyCastleProvider
 }
 
 rule UseRandomIV {
 	for javax.crypto.Cipher as myCipherMode,
 		java.security.SecureRandom as myRng,
 		javax.crypto.spec.IvParameterSpec as paramSpec
-	when _split(algorithm, "/", 1) == "CBC" && myCipherMode.direction == javax.crypto.ENCRYPT_MODE // == 1
+	when _split(algorithm, "/", 1) == "CBC" && myCipherMode.direction == javax.crypto.Cipher.ENCRYPT_MODE // == 1
 	ensure
+		/* Java source example
 		// myRng.nextBytes(iv)
 		// AlgorithmParameterSpec == IvParameterSpec && IvParameterSpec.ctor(iv)
 	    byte[] ivData = new byte[IV_LEN];
 	    sr.nextBytes(ivData);
 	    IvParameterSpec ivParamSpec = new IvParameterSpec(ivData);
 	    pbeCipher.init(Cipher.ENCRYPT_MODE, keySpec, ivParamSpec);
-	    
-	    _order()
-	    _receives_value_from(ivParamSpec, )
-	    _is_instance(paramSpec, javax.crypto.spec.IvParameterSpec) && 
-
-
+	     */
+	    _is_instance(paramSpec, javax.crypto.spec.IvParameterSpec) && _receives_value_from(paramSpec.iv, myRng.nextBytes(paramSpec.iv))
 	onfail NoRandomIV
 }

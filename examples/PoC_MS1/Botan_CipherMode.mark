@@ -115,7 +115,7 @@ rule BlockCiphers {
 rule UseOfBotan_CipherMode {
 	for Botan::Cipher_Mode as cm
 	ensure
-		order cm.create(), cm.init(), (cm.start(), cm.process()*, cm.finish())+, cm.reset()?;
+		order cm.create(), cm.init(), (cm.start(), cm.process()*, cm.finish())+, cm.reset()?
 	onfail WrongUseOfBotan_CipherMode
 }
 
