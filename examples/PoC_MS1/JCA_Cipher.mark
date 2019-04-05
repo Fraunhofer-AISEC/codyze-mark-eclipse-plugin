@@ -1,30 +1,92 @@
-package botan
+package jca
 
 
 entity javax.crypto.Cipher isa Cipher {
 	
-	
-	
+	var transformation : java.lang.String;
+	var provider : java.lang.String;
+	var direction : int;
+	var paramSpec : AlgorithmParameterSpec params;
+
 	op create(algorithm) {
-		call Botan::get_cipher_mode();
-		call Botan::CipherMode::create();
-		call Botan::CipherMode::create_or_throw(); 
+		/*
+		 * static Cipher getInstance(String transformation)
+		 * static Cipher getInstance(String transformation, Provider provider)
+		 * static Cipher getInstance(String transformation, String provider)
+		 */
+		call Cipher.getInstance(transformation);
+		call Cipher.getInstance(transformation, provider);
 	}
 	
 	op init() {
-		call Cipher.init();
+		/**
+		 * void init(int opmode, Certificate certificate)
+		 * void init(int opmode, Certificate certificate, SecureRandom random)
+		 * void init(int opmode, Key key)
+		 * void init(int opmode, Key key, AlgorithmParameters params)
+		 * void init(int opmode, Key key, AlgorithmParameterSpec params)
+		 * void init(int opmode, Key key, AlgorithmParameterSpec params, SecureRandom random)
+		 * void init(int opmode, Key key, AlgorithmParameters params, SecureRandom random)
+		 * void init(int opmode, Key key, SecureRandom random)
+		 */
+		call Cipher.init(direction, key);
+		call Cipher.init(direction, key, random);
+		call Cipher.init(direction, key, paramSpec);
+		call Cipher.init(direction, key, paramSpec, random);
 	}
 	
 	op process() {
+		/*
+		 * byte[] update(byte[] input)
+		 * byte[] update(byte[] input, int inputOffset, int inputLen)
+		 * int update(byte[] input, int inputOffset, int inputLen, byte[] output)
+		 * int update(byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset)
+		 * int update(ByteBuffer input, ByteBuffer output)
+		 */
 		call Cipher.update();
 	}
 	
 	op finish() {
-		call Cipher.doFinal();
+		/*
+		 * byte[] doFinal()
+		 * byte[] doFinal(byte[] input)
+		 * int doFinal(byte[] output, int outputOffset)
+		 * byte[] doFinal(byte[] input, int inputOffset, int inputLen)
+		 * int doFinal(byte[] input, int inputOffset, int inputLen, byte[] output)
+		 * int doFinal(byte[] input, int inputOffset, int inputLen, byte[] output, int outputOffset)
+		 * int doFinal(ByteBuffer input, ByteBuffer output)
+		 */
+		call Cipher.doFinal(_, _);
 	}
 	
-	op reset() {
-		
-	}
+	order create, init, process?, finish
 	
+}
+
+rule BlockCiphers {
+	for javax.crypto.Cipher
+	ensure
+		_split(algorithm, "/", 0) in [ "AES" ]  // TODO Nicetohave: Vordefinierte Methoden highlighten
+	onfail WrongBlockCipher
+}
+
+rule UseRandomIV {
+	for javax.crypto.Cipher as myCipherMode,
+		java.security.SecureRandom as myRng,
+		javax.crypto.spec.IvParameterSpec as paramSpec
+	when _split(algorithm, "/", 1) == "CBC" && myCipherMode.direction == javax.crypto.ENCRYPT_MODE // == 1
+	ensure
+		// myRng.nextBytes(iv)
+		// AlgorithmParameterSpec == IvParameterSpec && IvParameterSpec.ctor(iv)
+	    byte[] ivData = new byte[IV_LEN];
+	    sr.nextBytes(ivData);
+	    IvParameterSpec ivParamSpec = new IvParameterSpec(ivData);
+	    pbeCipher.init(Cipher.ENCRYPT_MODE, keySpec, ivParamSpec);
+	    
+	    _order()
+	    _receives_value_from(ivParamSpec, )
+	    _is_instance(paramSpec, javax.crypto.spec.IvParameterSpec) && 
+
+
+	onfail NoRandomIV
 }
