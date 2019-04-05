@@ -8,44 +8,53 @@ generate markDsl "http://www.fhg.de/aisec/mark/MarkDsl"
 
 MarkModel:
 	package=PackageClause
-	imports+=ImportDeclaration*
-	decl+=EntityDeclaration*
+//	imports+=ImportDeclaration*
+	/* either an entity or a rule, multiple per file and in arbitrary order */
+	( decl+=EntityDeclaration | rule+=RuleDeclaration )*
+	/*
 	orders+=OrderExpression*
-	rule+=RuleDeclaration*
 	functions+=FunctionExpression*
 	evidence+=EvidenceDeclaration*
 	oids+=ObjectIdentifier*
 //	msg+=MessageDeclaration*
+    */
 ;
 
 PackageClause:
 	'package' name=QualifiedName;
 
-ImportDeclaration:
-	'import' name=QualifiedName;
+//ImportDeclaration:
+//	'import' name=QualifiedName;
 
 EntityDeclaration:
-	'entity' name=QualifiedName ('isa' superType=[EntityDeclaration|QualifiedName])? '{' (content+=(VariableDeclaration | AssertionDeclaration | OpDeclaration | OrderExpression))* '}';
+	'entity' name=QualifiedName ('isa' superType=[EntityDeclaration|QualifiedName])? '{' content+=EntityStatement* '}';
+
+EntityStatement:
+    VariableDeclaration 
+//    | AssertionDeclaration  
+    | OpDeclaration 
+//    | OrderExpression 
+;
 
 VariableDeclaration:
-	'var' name=ID (':' type=Type)? ('=' init=InitializerExpression | 'where' where=WhereExpression)? ';';
+	'var' name=ID (':' type=Type)? /*('=' init=InitializerExpression | 'where' where=WhereExpression)?*/ ';';
 
-AssertionDeclaration:
-    'assert' exp=Expression 'onfail' msg=ID ';'
-;
+//AssertionDeclaration:
+//    'assert' exp=Expression 'onfail' msg=ID ';'
+//;
 
-InitializerExpression:
-	Literal | List;
+//InitializerExpression:
+//	Literal | List;
+//
+//List:
+//	{List} '[' items=LiteralList? ']';
 
-List:
-	{List} '[' items=LiteralList? ']';
+//WhereExpression:
+//	exp=Expression (emit=Emitter)?;
 
-WhereExpression:
-	exp=Expression (emit=Emitter)?;
-
-Emitter:
-	('error' | 'warning' | 'info') ID
-;
+//Emitter:
+//	('error' | 'warning' | 'info') ID
+//;
 
 QualifiedName:
 	ID
@@ -78,7 +87,7 @@ Template:
 
 
 Expression:
-	LogicalOrExpression
+	LogicalOrExpression | OrderExpression
 ;
 
 LogicalOrExpression returns Expression:
@@ -180,7 +189,7 @@ SimplifiedTermExpression returns OrderExpression:
 
 
 Terminal:
-    {Terminal} t=ID
+    {Terminal} ID '.' ID '()'
 ;
 
 FunctionCallExpression:
@@ -192,13 +201,7 @@ Argument:
 ;
 
 
-FunctionExpression:
-    name=QualifiedName '(' (params+=FunctionParameter (',' params+=FunctionParameter)*)? ')'
-;
 
-FunctionParameter:
-    name=ID
-;
 
 //Statement:
 ////	LetStmt | UsingStmt | 
@@ -231,7 +234,11 @@ RuleDeclaration:
 ;
 
 RuleStatement:
-	'for' entity=[EntityDeclaration|QualifiedName] (cond=ConditionStatement)? ensure=EnsureStatement 'onfail' msg=ID
+	'for' entities+=AliasedEntityExpression (',' entities+=AliasedEntityExpression)* (cond=ConditionStatement)? ensure=EnsureStatement 'onfail' msg=ID
+;
+
+AliasedEntityExpression:
+    e=[EntityDeclaration|QualifiedName] 'as' n=ID
 ;
 
 ConditionStatement:
@@ -240,46 +247,52 @@ ConditionStatement:
 
 
 EnsureStatement:
-    'ensure' exp=LogicalOrExpression
+    'ensure' exp=Expression
 ;
 
 
 
-EvidenceDeclaration:
-    'evidence' name=[EntityDeclaration] '{' (stmts+=EvidenceStatement ';')+ '}'
-;
-
-EvidenceStatement:
-    CallStatement | DeclarationStatement | ImportStatement
-;
+//EvidenceDeclaration:
+//    'evidence' name=[EntityDeclaration] '{' (stmts+=EvidenceStatement ';')+ '}'
+//;
+//
+//EvidenceStatement:
+//    CallStatement | DeclarationStatement | ImportStatement
+//;
 
 CallStatement:
-    'call' (res=ID '=')? call=FunctionExpression ('where' cond=WhereExpression)?
+    'call' (forbidden='forbidden')? call=FunctionDeclaration /* ('where' cond=WhereExpression)? */
 ;
+
+FunctionDeclaration:
+    name=QualifiedName ( '()' | '(' params+=ID (',' params+=ID)* ')' )
+;
+
 
 DeclarationStatement:
-    'decl' (res=ID '=')? decl=QualifiedName
+    'decl' (forbidden='forbidden')? res=ID '=' decl=LogicalOrExpression
 ;
 
-ImportStatement:
-    'incl' name=(ID | JavaImport | CppInclude)
-;
 
-JavaImport:
-    ID ('.' ID)+
-;
+//ImportStatement:
+//    'incl' name=(ID | JavaImport | CppInclude)
+//;
 
-CppInclude:
-    ID ('/' ID)+ ('.' ID)?
-;
+//JavaImport:
+//    ID ('.' ID)+
+//;
+//
+//CppInclude:
+//    ID ('/' ID)+ ('.' ID)?
+//;
 
 
 OpDeclaration:
-    'op' name=ID '(' (params+=ID (',' params+=ID)*)? ')' '{' (stmts+=OpStatement)* '}'
+    'op' name=ID '()' '{' (stmts+=OpStatement)* '}'
 ;
 
 OpStatement:
-    (CallStatement | DeclarationStatement | ImportStatement) ';'
+    (CallStatement | DeclarationStatement /* | ImportStatement */) ';'
 ;
 
 //MessageDeclaration:
@@ -304,9 +317,9 @@ OpStatement:
 //	'content' content=StringLiteral ';'
 //;
 
-ObjectIdentifier:
-    ('OID.')? INT ('.' INT)*
-;
+//ObjectIdentifier:
+//    ('OID.')? INT ('.' INT)*
+//;
 
 
 

@@ -6,12 +6,22 @@ entity Botan::Cipher_Mode isa Cipher {
 	var algorithm : std::string;
 	var direction : Botan::Cipher_Dir; // an enum of underlying type int
 	var provider : std::String;
-	var key : Botan::SymmetricKey; // aka Botan::OctetString; class wrapping Botan::secure_vector<T, secure_allocator<T>>; secure_vector<> scrubs memory on deallocate()
+	
+	var symkey : Botan::SymmetricKey; // aka Botan::OctetString; class wrapping Botan::secure_vector<T, secure_allocator<T>>; secure_vector<> scrubs memory on deallocate()
+	var svkey : Botan::secure_vector<uint8_t>;
+	
 	var iv : Botan::InitializationVector; // aka Botan::OctetString; class wrapping Botan::secure_vector<T, secure_allocator<T>>; secure_vector<> scrubs memory on deallocate()
-	var input : _;  // e.g. Botan::secure_vector<uint8_t>   // TODO Wildcards nur als _ möglich
+	
+	var input : Botan::secure_vector<uint8_t>;
 	var input_length : std::size_t;
 	
-	op create(algorithm) {
+	var buffer : std::uint8_t[];
+	
+	var nonce : std::uint8_t[];
+	var nonce_length : std::size_t;
+	
+	
+	op create() {
 		/*
 		 * method call(s):
 		 * - static std::unique_ptr<Cipher_Mode> create(const std::string& algo, Cipher_Dir direction, const std::string& provider = "")
@@ -40,8 +50,9 @@ entity Botan::Cipher_Mode isa Cipher {
 		 *   void set_key(const std::vector<uint8_t, Alloc>& key)
 		 * - void set_key(const uint8_t key[], size_t length);
 		 */
-		call Botan::Cipher_Mode::set_key(key);
-		//forbidden call Botan::Cipher_Mode::set_key(const uint8_t[], size_t)
+		call Botan::Cipher_Mode::set_key(symkey);
+		call Botan::Cipher_Mode::set_key(svkey);
+		call forbidden Botan::Cipher_Mode::set_key(_, _);
 	}
 	
 	op start() {
@@ -54,10 +65,11 @@ entity Botan::Cipher_Mode isa Cipher {
 		 * 
 		 * - virtual void start_msg(const uint8_t nonce[], size_t nonce_len) = 0;
 		 */
-    	// forbidden: call Botan::Cipher_Mode::start();
+    	call forbidden Botan::Cipher_Mode::start();
 		call Botan::Cipher_Mode::start(iv);
-		// forbidden: call Botan::Cipher_Mode::start(const uint8_t[], size_t);
-		// forbidden: call Botan::Cipher_Mode::start_msg(const uint8_t[], size_t);
+		call forbidden Botan::Cipher_Mode::start(nonce, nonce_length);
+		
+		call forbidden Botan::Cipher_Mode::start_msg(nonce, nonce_length);
 	}
 	
 	op process() {
@@ -69,8 +81,8 @@ entity Botan::Cipher_Mode isa Cipher {
 		 */
 		call Botan::Cipher_Mode::process(input, input_length);
 		
-		call Botan::Cipher_Mode::update(input);
-		call Botan::Cipher_Mode::update(input, input_length);
+		call Botan::Cipher_Mode::update(buffer);
+		call Botan::Cipher_Mode::update(buffer, _);
 	}
 	
 	op finish() {
@@ -79,7 +91,7 @@ entity Botan::Cipher_Mode isa Cipher {
 		 * - virtual void finish(secure_vector<uint8_t>& final_block, size_t offset = 0) = 0;
 		 */
 		call Botan::Cipher_Mode::finish(input);
-		call Botan::Cipher_Mode::finish(input, size_t);  // TODO keine Typen in Signatur, nur Variablen (oder ggf. Wildcard _)
+		call Botan::Cipher_Mode::finish(input, _);
 	}
 	
 	op reset() {
@@ -90,24 +102,29 @@ entity Botan::Cipher_Mode isa Cipher {
 		call Botan::Cipher_Mode::reset();
 	}
 	
-	order create, init, start, /*process*,*/ finish, reset?;
-	
 }
 
 
 rule BlockCiphers {
-	for Botan::Cipher_Mode 
+	for Botan::Cipher_Mode as cm
 	ensure
-		_split(algorithm, "/", 0) in [ "AES" ]  // TODO Nicetohave: Vordefinierte Methoden highlighten
+		_split(cm.algorithm, "/", 0) in [ "AES" ]  // TODO Nicetohave: Vordefinierte Methoden highlighten
 	onfail WrongBlockCipher
 }
 
-rule UseRandomIV {
-	for Botan::Cipher_Mode as myCipherMode,
-		Botan::AutoSeededRNG as myRng        // TODO Namens-Alias mit "as"
-	when _split(algorithm, "/", 1) == "CBC" && myCipherMode.direction == Botan::Cipher_Dir::ENCRYPTION
+rule UseOfBotan_CipherMode {
+	for Botan::Cipher_Mode as cm
 	ensure
-		_receives_value_from(myCipherMode.iv, myRng.myValue)  // TODO "def" trifft es hier nicht ganz. Es geht genaugenommen nicht um die Definition der Variablen, sondern um *alle möglichen* Werte, die sie zur Laufzeit annehmen kann.
+		order cm.create(), cm.init(), (cm.start(), cm.process()*, cm.finish())+, cm.reset()?;
+	onfail WrongUseOfBotan_CipherMode
+}
+
+rule UseRandomIV {
+	for Botan::Cipher_Mode as cm,
+		Botan::AutoSeededRNG as rng
+	when _split(cm.algorithm, "/", 1) == "CBC" && cm.direction == Botan::Cipher_Dir::ENCRYPTION
+	ensure
+		_receives_value_from(cm.iv, rng.myValue)  // TODO "def" trifft es hier nicht ganz. Es geht genaugenommen nicht um die Definition der Variablen, sondern um *alle möglichen* Werte, die sie zur Laufzeit annehmen kann.
 	onfail NoRandomIV
 }
 
@@ -118,3 +135,4 @@ rule UseRandomIV {
 //	ensure
 //		_length(key) == 256
 //}
+
