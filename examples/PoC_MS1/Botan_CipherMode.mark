@@ -119,6 +119,14 @@ rule UseOfBotan_CipherMode {
 	onfail WrongUseOfBotan_CipherMode
 }
 
+// Just for demo
+rule SimpleUseOfBotan_CipherMode {
+	for Botan::Cipher_Mode as cm
+	ensure
+		order cm.create(), cm.init(), cm.start(), cm.finish()
+	onfail WrongUseOfBotan_CipherMode
+}
+
 rule UseRandomIV {
 	for Botan::Cipher_Mode as cm,
 		Botan::AutoSeededRNG as rng
