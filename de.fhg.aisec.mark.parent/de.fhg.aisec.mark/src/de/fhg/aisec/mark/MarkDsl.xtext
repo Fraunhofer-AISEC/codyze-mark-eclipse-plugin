@@ -189,7 +189,7 @@ SimplifiedTermExpression returns OrderExpression:
 
 
 Terminal:
-    {Terminal} ID '.' ID '()'
+    {Terminal} entity=ID '.' op=ID '()'
 ;
 
 FunctionCallExpression:
