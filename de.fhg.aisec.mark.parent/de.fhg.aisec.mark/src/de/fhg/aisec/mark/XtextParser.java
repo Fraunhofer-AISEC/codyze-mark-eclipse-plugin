@@ -122,8 +122,8 @@ public class XtextParser {
     XtextParser p = new XtextParser();
 
     // Add two MARK files
-    p.addMarkFile(new File("/home/julian/workspace/2018-11-bsi-secure-crypto-lib-tool/code/mark-crymlin-eclipse-plugin/examples/Test/Rules.mark"));
-    p.addMarkFile(new File("/home/julian/workspace/2018-11-bsi-secure-crypto-lib-tool/code/mark-crymlin-eclipse-plugin/examples/Test/AES.mark"));
+    p.addMarkFile(new File("../../examples/Test/Rules.mark"));
+    p.addMarkFile(new File("../../examples/Test/AES.mark"));
 
     // Parse them
     List<MarkModel> parse = p.parse();

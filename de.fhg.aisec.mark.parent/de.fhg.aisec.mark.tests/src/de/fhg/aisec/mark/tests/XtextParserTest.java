@@ -21,7 +21,7 @@ public class XtextParserTest {
 	@Test
 	public void test() {
 		XtextParser parser = new XtextParser();
-		parser.addMarkFile(new File("/home/julian/workspace/2018-11-bsi-secure-crypto-lib-tool/code/mark-crymlin-eclipse-plugin/examples/Test/Rules.mark"));
+		parser.addMarkFile(new File("../../examples/Test/Rules.mark"));
 		List<MarkModel> result = parser.parse();
 		assertNotNull(result);
 		XtextParser.dump(result.get(0));
