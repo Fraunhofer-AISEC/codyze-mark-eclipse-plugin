@@ -3,8 +3,10 @@ package de.fhg.aisec.mark;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -104,13 +106,13 @@ public class XtextParser {
    * 
    * @return
    */
-  public List<MarkModel> parse() {
+  public HashMap<String, MarkModel> parse() {
     EcoreUtil.resolveAll(this.resourceSet);
 
-    List<MarkModel> models = new ArrayList<>();
+    HashMap<String, MarkModel> models = new HashMap<String, MarkModel>();
     for (Resource r : this.resourceSet.getResources()) {
       EObject model = (MarkModel) r.getContents().get(0);
-      models.add((MarkModel) model);
+      models.put(r.getURI().toFileString(), (MarkModel) model);
     }
     return models;
   }
@@ -122,15 +124,17 @@ public class XtextParser {
     XtextParser p = new XtextParser();
 
     // Add two MARK files
-    p.addMarkFile(new File("../../examples/Test/Rules.mark"));
-    p.addMarkFile(new File("../../examples/Test/AES.mark"));
+    //p.addMarkFile(new File("../../examples/Test/Rules.mark"));
+    //p.addMarkFile(new File("../../examples/Test/AES.mark"));
+    p.addMarkFile(new File("../../examples/PoC_MS1/JCA_Cipher.mark"));
+    
 
     // Parse them
-    List<MarkModel> parse = p.parse();
+    HashMap<String, MarkModel> parse = p.parse();
 
     // Dump their model
-    for (MarkModel par : parse) {
-      dump(par);
+    for (Entry<String, MarkModel> par : parse.entrySet()) {
+      dump(par.getValue());
     }
 
     // Dump their errors (if any)

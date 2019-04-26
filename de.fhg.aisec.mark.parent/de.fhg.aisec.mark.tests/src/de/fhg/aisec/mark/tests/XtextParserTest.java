@@ -3,7 +3,9 @@ package de.fhg.aisec.mark.tests;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.junit.Test;
 
@@ -22,9 +24,12 @@ public class XtextParserTest {
 	public void test() {
 		XtextParser parser = new XtextParser();
 		parser.addMarkFile(new File("../../examples/Test/Rules.mark"));
-		List<MarkModel> result = parser.parse();
+		HashMap<String, MarkModel> result = parser.parse();
 		assertNotNull(result);
-		XtextParser.dump(result.get(0));
+		for (Entry<String, MarkModel> entry : result.entrySet()) {
+			System.out.println(entry.getKey());
+			XtextParser.dump(entry.getValue());
+		}
 	}
 
 }
