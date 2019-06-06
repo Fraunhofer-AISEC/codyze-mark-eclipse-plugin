@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>de.fhg.aisec.mark</groupId>
 		<artifactId>de.fhg.aisec.mark.parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>1.0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>de.fhg.aisec.mark.ide</artifactId>
 	<packaging>eclipse-plugin</packaging>
