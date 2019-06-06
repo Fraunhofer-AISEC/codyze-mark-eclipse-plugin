@@ -21,7 +21,11 @@ MarkModel:
 ;
 
 PackageClause:
-	'package' name=QualifiedName;
+	'package' name=PackageName;
+	
+PackageName:
+    (ID '.')* ID
+;
 
 //ImportDeclaration:
 //	'import' name=QualifiedName;
@@ -37,15 +41,15 @@ EntityStatement:
 ;
 
 VariableDeclaration:
-	'var' name=ID (':' type=Type)? /*('=' init=InitializerExpression | 'where' where=WhereExpression)?*/ ';';
+	'var' name=ID (':' type=Type)? ('=' init=InitializerExpression /* | 'where' where=WhereExpression */)? ';';
 
 //AssertionDeclaration:
 //    'assert' exp=Expression 'onfail' msg=ID ';'
 //;
 
-//InitializerExpression:
-//	Literal | List;
-//
+InitializerExpression:
+	Literal | LiteralListExpression;
+
 //List:
 //	{List} '[' items=LiteralList? ']';
 
@@ -234,7 +238,7 @@ RuleDeclaration:
 ;
 
 RuleStatement:
-	'for' entities+=AliasedEntityExpression (',' entities+=AliasedEntityExpression)* (cond=ConditionStatement)? ensure=EnsureStatement 'onfail' msg=ID
+	'using' entities+=AliasedEntityExpression (',' entities+=AliasedEntityExpression)* (cond=ConditionStatement)? ensure=EnsureStatement 'onfail' msg=ID
 ;
 
 AliasedEntityExpression:
@@ -265,7 +269,7 @@ CallStatement:
 ;
 
 FunctionDeclaration:
-    name=QualifiedName ( '()' | '(' params+=ID (',' params+=ID)* ')' )
+    name=QualifiedName ( '()' | '(' ( params+=ELLIPSIS | params+=ID (',' params+=ID)* ) ')' )
 ;
 
 
@@ -292,7 +296,7 @@ OpDeclaration:
 ;
 
 OpStatement:
-    (CallStatement | DeclarationStatement /* | ImportStatement */) ';'
+    (forbidden='forbidden')? (var=ID '=')? call=FunctionDeclaration ';'
 ;
 
 //MessageDeclaration:
@@ -362,6 +366,10 @@ StringLiteral:
 
 // Tokens 
 
+terminal ELLIPSIS:
+    '...'
+;
+
 terminal HEX:
 	'0x' (HEX_DIGIT)+
 ;
@@ -382,11 +390,5 @@ terminal fragment HEX_DIGIT:
 ;
 
 terminal fragment DIGIT:
-	'0' 
-	| NONZERO_DIGIT
+	'0'..'9' 
 ;
-
-terminal fragment NONZERO_DIGIT:
-	'1'..'9'
-;
-

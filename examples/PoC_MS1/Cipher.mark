@@ -3,4 +3,14 @@ package base
 
 entity Cipher {
 	
+	var algorithm;
+	
+}
+
+
+rule ankds {
+	using Cipher as c
+	ensure
+		c.algorithm in ["AES"]
+	onfail error	
 }
