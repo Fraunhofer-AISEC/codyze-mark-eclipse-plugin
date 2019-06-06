@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Automatic-Module-Name: de.fhg.aisec.mark
 Bundle-ManifestVersion: 2
 Bundle-Name: de.fhg.aisec.mark
-Bundle-Vendor: My Company
-Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Fraunhofer AISEC
+Bundle-Version: 1.0.1.qualifier
 Bundle-SymbolicName: de.fhg.aisec.mark; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext,
