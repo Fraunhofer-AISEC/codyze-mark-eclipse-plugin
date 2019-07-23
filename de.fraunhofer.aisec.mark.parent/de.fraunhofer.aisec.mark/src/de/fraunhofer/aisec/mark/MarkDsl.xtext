@@ -1,0 +1,394 @@
+/**
+ * This is the ANTLR/Xtext grammar definition for the MARK domain specific language. 
+ */
+grammar de.fraunhofer.aisec.mark.MarkDsl with org.eclipse.xtext.common.Terminals
+
+//import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+generate markDsl "http://www.aisec.fraunhofer.de/mark/MarkDsl"
+
+MarkModel:
+	package=PackageClause
+//	imports+=ImportDeclaration*
+	/* either an entity or a rule, multiple per file and in arbitrary order */
+	( decl+=EntityDeclaration | rule+=RuleDeclaration )+
+	/*
+	orders+=OrderExpression*
+	functions+=FunctionExpression*
+	evidence+=EvidenceDeclaration*
+	oids+=ObjectIdentifier*
+//	msg+=MessageDeclaration*
+    */
+;
+
+PackageClause:
+	'package' name=PackageName;
+	
+PackageName:
+    (ID '.')* ID
+;
+
+//ImportDeclaration:
+//	'import' name=QualifiedName;
+
+EntityDeclaration:
+	'entity' name=QualifiedName ('isa' superType=[EntityDeclaration|QualifiedName])? '{' content+=EntityStatement* '}';
+
+EntityStatement:
+    VariableDeclaration 
+//    | AssertionDeclaration  
+    | OpDeclaration 
+//    | OrderExpression 
+;
+
+VariableDeclaration:
+	'var' name=ID (':' type=Type)? ('=' init=InitializerExpression /* | 'where' where=WhereExpression */)? ';';
+
+//AssertionDeclaration:
+//    'assert' exp=Expression 'onfail' msg=ID ';'
+//;
+
+InitializerExpression:
+	Literal | LiteralListExpression;
+
+//List:
+//	{List} '[' items=LiteralList? ']';
+
+//WhereExpression:
+//	exp=Expression (emit=Emitter)?;
+
+//Emitter:
+//	('error' | 'warning' | 'info') ID
+//;
+
+QualifiedName:
+	ID
+	| JavaQualifiedName
+	| CppQualifiedName
+;
+	
+JavaQualifiedName:
+    ID ('.' ID)+
+;
+
+CppQualifiedName:
+    ID ('::' ID)+ 
+;
+
+Type:
+    UniversalType 
+;
+
+/*
+ * This type rule at least enforces that users cannot mix Java and C++ style qualified name separator
+ */
+UniversalType:
+    ID (('.' ID)+ | ('::' ID)+)? (Template)? ('*' | '&' | '[]')?
+;
+
+Template:
+    '<' Type '>'
+;
+
+
+Expression:
+	LogicalOrExpression | OrderExpression
+;
+
+LogicalOrExpression returns Expression:
+	LogicalAndExpression ({LogicalOrExpression.left=current} op=('||') right=LogicalAndExpression)*
+;
+
+LogicalAndExpression returns Expression:
+	ComparisonExpression ({LogicalAndExpression.left=current} op=('&&') right=ComparisonExpression)*
+;
+
+ComparisonExpression returns Expression:
+	AdditionExpression ({ComparisonExpression.left=current} op=('=='|'!='|'<'|'<='|'>'|'>='|'in'|'like') right=AdditionExpression)*
+;
+
+AdditionExpression returns Expression:
+	MultiplicationExpression ({AdditionExpression.left=current} op=('+'|'-'|'|'|'^') right=MultiplicationExpression)*
+;
+
+MultiplicationExpression returns Expression:
+	PrimaryExpression ({MultiplicationExpression.left=current} op=('*'|'/'|'%'|'<<'|'>>'|'&'|'&^') right=PrimaryExpression)*
+;
+
+/* 
+ * This is a little hack to avoid superfluous UnaryExpression nodes in the EObject AST. 
+ * Now, UnaryExpression nodes are generated only if a unary operator is detected. 
+ * In addition, we prevent expressions like '!!a'. 
+ */
+PrimaryExpression returns Expression:
+	UnaryExpression
+	| SimplifiedPrimaryExpression
+;
+
+UnaryExpression:
+    op=('+'|'-'|'!'|'^') exp=SimplifiedPrimaryExpression 
+;
+
+SimplifiedPrimaryExpression returns Expression:
+    Literal 
+    | Operand 
+    | FunctionCallExpression 
+    | LiteralListExpression 
+    | '(' LogicalOrExpression ')'
+;
+
+Operand:
+    {Operand} operand=OperandName
+;
+
+OperandName:
+    QualifiedName
+;
+
+
+LiteralListExpression:
+    '[' values+=Literal (',' values+=Literal)* ']'
+;
+
+
+/*
+ * Grammar rules to specify the order of actions/events/operations
+ */
+
+OrderExpression:
+    {OrderExpression} 'order' exp=SequenceExpression
+;
+
+
+SequenceExpression returns OrderExpression:
+    AlternativeExpression ({SequenceExpression.left=current} op=',' right=AlternativeExpression)*
+;
+
+AlternativeExpression returns OrderExpression:
+    TermExpression ({AlternativeExpression.left=current} op='|' right=TermExpression)*
+;
+
+
+ExclusionExpression:
+    op='!' exp=SimplifiedTermExpression
+;
+
+RepetitionExpression returns OrderExpression:
+    SimplifiedTermExpression ({RepetitionExpression.expr=current} op=('?'|'*'|'+'))?
+;
+
+TermExpression returns OrderExpression:
+    ExclusionExpression
+    | RepetitionExpression
+;
+
+
+GroupingExpression returns OrderExpression:
+    '(' SequenceExpression ')'
+;
+
+SimplifiedTermExpression returns OrderExpression:
+    Terminal
+    | GroupingExpression
+;
+
+
+Terminal:
+    {Terminal} entity=ID '.' op=ID '()'
+;
+
+FunctionCallExpression:
+    name=QualifiedName ( '()' | '(' (args+=Argument (',' args+=Argument)*)? ')' )
+;
+
+Argument:
+    LogicalOrExpression
+;
+
+
+
+
+//Statement:
+////	LetStmt | UsingStmt | 
+//	TypeDeclarationStmt;
+//
+//	//LetStmt:
+////	'LET' name=ID '=' expression=Sequence;
+////
+////UsingStmt:
+////	'USING' name=[LetStmt] 'ENSURE' 'THAT' invariant=STRING 'REASON' reason=STRING // TODO invariant
+////;
+//
+////Sequence:
+////	headTerm=TraversalTerm ('->' tailTerms+=TraversalTerm)*;
+////
+////TraversalTerm:
+////	name=ID '(' parameters=ArgumentList? ')';
+////
+////ArgumentList:
+////	head=ID (',' tail+=ID)*;
+//TypeDeclarationStmt:
+//	name=ID ('isa' superType=ID)? '{' (content+=ID)* '}';
+//
+//	//Type:
+////	name=ID;
+
+
+RuleDeclaration:
+	'rule' name=ID '{' stmt=RuleStatement '}'
+;
+
+RuleStatement:
+	'using' entities+=AliasedEntityExpression (',' entities+=AliasedEntityExpression)* (cond=ConditionStatement)? ensure=EnsureStatement 'onfail' msg=ID
+;
+
+AliasedEntityExpression:
+    e=[EntityDeclaration|QualifiedName] 'as' n=ID
+;
+
+ConditionStatement:
+    'when' exp=LogicalOrExpression
+;
+
+
+EnsureStatement:
+    'ensure' exp=Expression
+;
+
+
+
+//EvidenceDeclaration:
+//    'evidence' name=[EntityDeclaration] '{' (stmts+=EvidenceStatement ';')+ '}'
+//;
+//
+//EvidenceStatement:
+//    CallStatement | DeclarationStatement | ImportStatement
+//;
+
+CallStatement:
+    'call' (forbidden='forbidden')? call=FunctionDeclaration /* ('where' cond=WhereExpression)? */
+;
+
+FunctionDeclaration:
+    name=QualifiedName ( '()' | '(' ( params+=ELLIPSIS | params+=ID (',' params+=ID)* ) ')' )
+;
+
+
+DeclarationStatement:
+    'decl' (forbidden='forbidden')? res=ID '=' decl=LogicalOrExpression
+;
+
+
+//ImportStatement:
+//    'incl' name=(ID | JavaImport | CppInclude)
+//;
+
+//JavaImport:
+//    ID ('.' ID)+
+//;
+//
+//CppInclude:
+//    ID ('/' ID)+ ('.' ID)?
+//;
+
+
+OpDeclaration:
+    'op' name=ID '()' '{' (stmts+=OpStatement)* '}'
+;
+
+OpStatement:
+    (forbidden='forbidden')? (var=ID '=')? call=FunctionDeclaration ';'
+;
+
+//MessageDeclaration:
+//	'message' name=QualifiedName '{' msg=MessageStatement '}'
+//;
+//
+//MessageStatement:
+//	s=MessageSeverity
+//	l=MessageLanguage?
+//	c=MessageContent	
+//;
+//
+//MessageSeverity:
+//	'severity' severity=('error'|'warning'|'info'|'debug') ';'
+//;
+//
+//MessageLanguage:
+//	'lang' language=ID ';' 
+//;
+//
+//MessageContent:
+//	'content' content=StringLiteral ';'
+//;
+
+//ObjectIdentifier:
+//    ('OID.')? INT ('.' INT)*
+//;
+
+
+
+LiteralList:
+	lit+=Literal (',' lit+=Literal)*
+;
+
+Literal:
+	{IntegerLiteral} value=IntegerLiteral 
+	| {FloatingPointLiteral} value=FloatingPointLiteral 
+	| {BooleanLiteral} value=BooleanLiteral 
+	| {CharacterLiteral} value=CharacterLiteral 
+	| {StringLiteral} value=StringLiteral
+;
+
+
+IntegerLiteral:
+	INT	
+	| HEX
+;
+
+FloatingPointLiteral:
+	INT '.' INT
+;
+	
+BooleanLiteral:
+	'true' 
+	| 'false'
+;
+	
+CharacterLiteral:
+	CHARACTER
+;
+
+StringLiteral:
+	STRING
+;
+
+
+
+// Tokens 
+
+terminal ELLIPSIS:
+    '...'
+;
+
+terminal HEX:
+	'0x' (HEX_DIGIT)+
+;
+
+@Override
+terminal STRING:
+	'"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\') | !('\\'|'"') )* '"'
+;
+
+terminal CHARACTER:
+	'\'' ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\') | !('\\'|'\'') )? '\''
+;
+
+terminal fragment HEX_DIGIT:
+	DIGIT 
+	| 'a'..'f' 
+	| 'A'..'F'
+;
+
+terminal fragment DIGIT:
+	'0'..'9' 
+;

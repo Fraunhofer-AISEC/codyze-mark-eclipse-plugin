@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Automatic-Module-Name: de.fraunhofer.aisec.mark.ide
+Bundle-ManifestVersion: 2
+Bundle-Name: de.fraunhofer.aisec.mark.ide
+Bundle-Vendor: Fraunhofer AISEC
+Bundle-Version: 1.0.1.qualifier
+Bundle-SymbolicName: de.fraunhofer.aisec.mark.ide;singleton:=true
+Bundle-ActivationPolicy: lazy
+Require-Bundle: de.fraunhofer.aisec.mark,
+ org.eclipse.xtext.ide,
+ org.eclipse.xtext.xbase.ide,
+ org.antlr.runtime;bundle-version="[3.2.0,3.2.1)"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: de.fraunhofer.aisec.mark.ide.contentassist.antlr.internal,
+ de.fraunhofer.aisec.mark.ide.contentassist.antlr
