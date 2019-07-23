@@ -109,7 +109,7 @@
                     </environments>
                 </configuration>
             </plugin>
-            <plugin>
+            <!-- <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
                 <executions>
@@ -118,7 +118,7 @@
                         <phase>none</phase>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin> -->
         </plugins>
         <pluginManagement>
             <plugins>
