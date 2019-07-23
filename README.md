@@ -10,8 +10,8 @@ This project holds several dependent eclipse projects, which implement the follo
 
 Do not let all the files confuse you. There are only two essential files:
 
-* `de.fhg.aisec.mark.parent/de.fhg.aisec.mark/src/de/fhg/aisec/mark/MarkDsl.xtext` is the language grammar of MARK
-* `de.fhg.aisec.mark.parent/de.fhg.aisec.mark/src/de/fhg/aisec/mark/generator/MarkDslGenerator.xtend` is the code generation template
+* `de.fraunhofer.aisec.mark.parent/de.fraunhofer.aisec.mark/src/de/fraunhofer/aisec/mark/MarkDsl.xtext` is the language grammar of MARK
+* `de.fraunhofer.aisec.mark.parent/de.fraunhoder.aisec.mark/src/de/fraunhofer/aisec/mark/generator/MarkDslGenerator.xtend` is the code generation template
 
 
 # How to build
@@ -21,10 +21,10 @@ https://github.com/eclipse/xtext/issues/1316
 
 ## With Maven
 
-If you are a build server, you may simply run Maven in the `de.fhg.aisec.mark.parent` project:
+If you are a build server, you may simply run Maven in the `de.fraunhofer.aisec.mark.parent` project:
 
 ```
-cd de.fhg.aisec.mark.parent
+cd de.fraunhofer.aisec.mark.parent
 mvn clean install
 ```
 
