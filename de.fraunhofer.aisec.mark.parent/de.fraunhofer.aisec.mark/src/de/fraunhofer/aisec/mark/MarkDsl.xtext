@@ -269,14 +269,20 @@ CallStatement:
 ;
 
 FunctionDeclaration:
-    name=QualifiedName ( '()' | '(' ( params+=ELLIPSIS | params+=ID (',' params+=ID)* ) ')' )
+//    name=QualifiedName '(' ( params+=ID ( (',' params+=ID)* (',' params+=ELLIPSIS)? ) | params+=ELLIPSIS )? ')'
+    name=QualifiedName ( 
+        '()' 
+        | '(' (
+                params+=ELLIPSIS
+                | ( params+=ID ( ',' params+=ID )* )
+                | ( params+=ID ',' ( params+=ID ',' )* params+=ELLIPSIS ) 
+            ) ')'
+    )
 ;
 
-
-DeclarationStatement:
-    'decl' (forbidden='forbidden')? res=ID '=' decl=LogicalOrExpression
+ParameterList:
+    params+=(ID|ELLIPSIS)
 ;
-
 
 //ImportStatement:
 //    'incl' name=(ID | JavaImport | CppInclude)
@@ -292,7 +298,7 @@ DeclarationStatement:
 
 
 OpDeclaration:
-    'op' name=ID '()' '{' (stmts+=OpStatement)* '}'
+    'op' name=ID '{' (stmts+=OpStatement)* '}'
 ;
 
 OpStatement:
