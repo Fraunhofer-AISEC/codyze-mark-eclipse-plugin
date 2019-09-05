@@ -3,7 +3,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.fraunhofer.aisec.mark</groupId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.2-SNAPSHOT</version>
     <artifactId>de.fraunhofer.aisec.mark.parent</artifactId>
     <packaging>pom</packaging>
 
@@ -109,16 +109,13 @@
                     </environments>
                 </configuration>
             </plugin>
-            <!-- <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-deploy</id>
-                        <phase>none</phase>
-                    </execution>
-                </executions>
-            </plugin> -->
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-versions-plugin</artifactId>
+            </plugin>
+            <!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-deploy-plugin</artifactId> 
+                <executions> <execution> <id>default-deploy</id> <phase>none</phase> </execution> 
+                </executions> </plugin> -->
         </plugins>
         <pluginManagement>
             <plugins>
@@ -276,6 +273,11 @@
                         <failIfNoTests>false</failIfNoTests>
                         <useUIHarness>false</useUIHarness>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.eclipse.tycho</groupId>
+                    <artifactId>tycho-versions-plugin</artifactId>
+                    <version>1.4.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>

@@ -52,3 +52,16 @@ The `examples` folder contains Xtext projects with MARK examples. I use them to 
 To use these examples, you have to start the `MARK.product`. It starts a new Eclipse instance with its own workspace. In the new Eclipse instance you can import the Xtext projects from the `examples` folder as *Existing Projects into Workspace*. Make sure to deselect the option *Copy projects into workspace* if you want to commit your changes. By deselecting this option the Xtext project folder is used directly.
 
 If you want to start your own examples, you may have to copy your project from the instance's workspace into the `examples` folder. Afterwards, you remove your project from Eclipse and import it from the `examples` folder. Ensure again to deselect the *Copy projects into Workspace* option to be able to commit your changes later on.
+
+
+
+# FAQ
+
+## Bumping version numbers
+
+The parent project uses the tycho-versions-plugin to update the version number across all (sub-)projects.
+>>>
+$ mvn org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=X.Y.Z -Dtycho.mode=maven
+>>>
+
+See here for details: [vogella Tutorial on Eclipse Tycho](https://www.vogella.com/tutorials/EclipseTycho/article.html#setting-version-numbers)
