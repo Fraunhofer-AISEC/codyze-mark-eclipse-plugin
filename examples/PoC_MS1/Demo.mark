@@ -1,0 +1,24 @@
+package botan
+
+
+entity AES isa BlockCipher {
+	
+	var block_length;
+	var key_length;
+	
+	
+	op create {
+		AES.getInstance();
+		AES.getInstance(...);
+	}
+	
+}
+
+
+rule AES_KeyLengthof256bit {
+	using 
+		AES as aes
+	ensure
+		aes.key_length == 256
+	onfail InsufficientKeyLength
+}
