@@ -3,62 +3,51 @@
  */
 grammar de.fraunhofer.aisec.mark.MarkDsl with org.eclipse.xtext.common.Terminals
 
-//import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate markDsl "http://www.aisec.fraunhofer.de/mark/MarkDsl"
 
+
 MarkModel:
-	package=PackageClause
+    package=PackageDeclaration
 //	imports+=ImportDeclaration*
-	/* either an entity or a rule, multiple per file and in arbitrary order */
-	( decl+=EntityDeclaration | rule+=RuleDeclaration )+
-	/*
-	orders+=OrderExpression*
-	functions+=FunctionExpression*
-	evidence+=EvidenceDeclaration*
+    /* either an entity or a rule, multiple per file and in arbitrary order */
+    ( decl+=EntityDeclaration | rule+=RuleDeclaration )+
+/*
 	oids+=ObjectIdentifier*
-//	msg+=MessageDeclaration*
-    */
+	msg+=MessageDeclaration*
+*/
 ;
 
-PackageClause:
-	'package' name=PackageName;
-	
-PackageName:
-    (ID '.')* ID
+
+
+PackageDeclaration:
+    'package' name=DotQualifiedIdentifier
 ;
+
+
 
 //ImportDeclaration:
 //	'import' name=QualifiedName;
 
+
+
 EntityDeclaration:
-	'entity' name=QualifiedName ('isa' superType=[EntityDeclaration|QualifiedName])? '{' content+=EntityStatement* '}';
+    'entity' name=QualifiedName ( 'isa' superType=[EntityDeclaration|QualifiedName] )? '{' content+=EntityStatement* '}'
+;
 
 EntityStatement:
     VariableDeclaration 
-//    | AssertionDeclaration  
     | OpDeclaration 
-//    | OrderExpression 
 ;
 
 VariableDeclaration:
-	'var' name=ID (':' type=Type)? ('=' init=InitializerExpression /* | 'where' where=WhereExpression */)? ';';
-
-//AssertionDeclaration:
-//    'assert' exp=Expression 'onfail' msg=ID ';'
-//;
+    'var' name=ID ( ':' type=Type )? /* ( '=' init=InitializerExpression )? */ ';'
+;
 
 InitializerExpression:
 	Literal | LiteralListExpression;
 
-//List:
-//	{List} '[' items=LiteralList? ']';
 
-//WhereExpression:
-//	exp=Expression (emit=Emitter)?;
 
-//Emitter:
-//	('error' | 'warning' | 'info') ID
-//;
 
 QualifiedName:
 	ID
@@ -103,15 +92,16 @@ LogicalAndExpression returns Expression:
 ;
 
 ComparisonExpression returns Expression:
-	AdditionExpression ({ComparisonExpression.left=current} op=('=='|'!='|'<'|'<='|'>'|'>='|'in'|'like') right=AdditionExpression)*
+    MultiplicationExpression ({ComparisonExpression.left=current} op=('=='|'!='|'<'|'<='|'>'|'>='|'in'|'like') right=MultiplicationExpression)*
 ;
 
-AdditionExpression returns Expression:
-	MultiplicationExpression ({AdditionExpression.left=current} op=('+'|'-'|'|'|'^') right=MultiplicationExpression)*
-;
+//AdditionExpression returns Expression:
+//	MultiplicationExpression ({AdditionExpression.left=current} op=('+'|'-'|'|'|'^') right=MultiplicationExpression)*
+//;
 
 MultiplicationExpression returns Expression:
-	PrimaryExpression ({MultiplicationExpression.left=current} op=('*'|'/'|'%'|'<<'|'>>'|'&'|'&^') right=PrimaryExpression)*
+    // possible ops: '*', '/', '<<', '>>', '&', '&^'
+    PrimaryExpression ({MultiplicationExpression.left=current} op=('%') right=PrimaryExpression)*
 ;
 
 /* 
@@ -125,7 +115,8 @@ PrimaryExpression returns Expression:
 ;
 
 UnaryExpression:
-    op=('+'|'-'|'!'|'^') exp=SimplifiedPrimaryExpression 
+    // possible ops: '+', '-', '^' 
+    op=('!') exp=SimplifiedPrimaryExpression 
 ;
 
 SimplifiedPrimaryExpression returns Expression:
@@ -206,33 +197,6 @@ Argument:
 
 
 
-
-//Statement:
-////	LetStmt | UsingStmt | 
-//	TypeDeclarationStmt;
-//
-//	//LetStmt:
-////	'LET' name=ID '=' expression=Sequence;
-////
-////UsingStmt:
-////	'USING' name=[LetStmt] 'ENSURE' 'THAT' invariant=STRING 'REASON' reason=STRING // TODO invariant
-////;
-//
-////Sequence:
-////	headTerm=TraversalTerm ('->' tailTerms+=TraversalTerm)*;
-////
-////TraversalTerm:
-////	name=ID '(' parameters=ArgumentList? ')';
-////
-////ArgumentList:
-////	head=ID (',' tail+=ID)*;
-//TypeDeclarationStmt:
-//	name=ID ('isa' superType=ID)? '{' (content+=ID)* '}';
-//
-//	//Type:
-////	name=ID;
-
-
 RuleDeclaration:
 	'rule' name=ID '{' stmt=RuleStatement '}'
 ;
@@ -269,7 +233,6 @@ CallStatement:
 ;
 
 FunctionDeclaration:
-//    name=QualifiedName '(' ( params+=ID ( (',' params+=ID)* (',' params+=ELLIPSIS)? ) | params+=ELLIPSIS )? ')'
     name=QualifiedName ( 
         '()' 
         | '(' (
@@ -278,10 +241,6 @@ FunctionDeclaration:
                 | ( params+=ID ',' ( params+=ID ',' )* params+=ELLIPSIS ) 
             ) ')'
     )
-;
-
-ParameterList:
-    params+=(ID|ELLIPSIS)
 ;
 
 //ImportStatement:
@@ -337,37 +296,34 @@ LiteralList:
 	lit+=Literal (',' lit+=Literal)*
 ;
 
+
+
 Literal:
 	{IntegerLiteral} value=IntegerLiteral 
-	| {FloatingPointLiteral} value=FloatingPointLiteral 
 	| {BooleanLiteral} value=BooleanLiteral 
-	| {CharacterLiteral} value=CharacterLiteral 
 	| {StringLiteral} value=StringLiteral
 ;
-
 
 IntegerLiteral:
 	INT	
 	| HEX
 ;
 
-FloatingPointLiteral:
-	INT '.' INT
-;
-	
 BooleanLiteral:
 	'true' 
 	| 'false'
-;
-	
-CharacterLiteral:
-	CHARACTER
 ;
 
 StringLiteral:
 	STRING
 ;
 
+
+// Common
+
+DotQualifiedIdentifier:
+    ID ( '.' ID )*
+;
 
 
 // Tokens 
@@ -378,15 +334,6 @@ terminal ELLIPSIS:
 
 terminal HEX:
 	'0x' (HEX_DIGIT)+
-;
-
-@Override
-terminal STRING:
-	'"' ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\') | !('\\'|'"') )* '"'
-;
-
-terminal CHARACTER:
-	'\'' ( '\\' ('b'|'t'|'n'|'f'|'r'|'"'|'\''|'\\') | !('\\'|'\'') )? '\''
 ;
 
 terminal fragment HEX_DIGIT:
