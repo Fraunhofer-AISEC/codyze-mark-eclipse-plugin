@@ -12,8 +12,6 @@ entity SyntaxTest isa BlockCipher {
 }
 
 
-order a;
-
 
 evidence AES {
 	call Botan::test(String, _);

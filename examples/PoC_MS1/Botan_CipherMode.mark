@@ -108,7 +108,7 @@ entity Botan::Cipher_Mode isa Cipher {
 rule BlockCiphers {
 	using Botan::Cipher_Mode as cm
 	ensure
-		_split(cm.algorithm, "/", 0) in [ "AES" ]  // TODO Nicetohave: Vordefinierte Methoden highlighten
+		_split(cm.algorithm, "/", 0) in [ "AES" ]
 	onfail WrongBlockCipher
 }
 
