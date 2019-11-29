@@ -3,7 +3,7 @@ Automatic-Module-Name: de.fraunhofer.aisec.mark
 Bundle-ManifestVersion: 2
 Bundle-Name: de.fraunhofer.aisec.mark
 Bundle-Vendor: Fraunhofer AISEC
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.1.0
 Bundle-SymbolicName: de.fraunhofer.aisec.mark;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.xtext,
