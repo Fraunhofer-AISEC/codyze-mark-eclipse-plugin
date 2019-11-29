@@ -92,16 +92,17 @@ LogicalAndExpression returns Expression:
 ;
 
 ComparisonExpression returns Expression:
-    MultiplicationExpression ({ComparisonExpression.left=current} op=('=='|'!='|'<'|'<='|'>'|'>='|'in'|'like') right=MultiplicationExpression)*
+    // to skip AdditionExpression replace with MultiplicationExpression
+    AdditionExpression ({ComparisonExpression.left=current} op=('=='|'!='|'<'|'<='|'>'|'>='|'in'|'like') right=AdditionExpression)*
 ;
 
-//AdditionExpression returns Expression:
-//	MultiplicationExpression ({AdditionExpression.left=current} op=('+'|'-'|'|'|'^') right=MultiplicationExpression)*
-//;
+AdditionExpression returns Expression:
+	MultiplicationExpression ({AdditionExpression.left=current} op=('+'|'-'|'|'|'^') right=MultiplicationExpression)*
+;
 
 MultiplicationExpression returns Expression:
-    // possible ops: '*', '/', '<<', '>>', '&', '&^'
-    PrimaryExpression ({MultiplicationExpression.left=current} op=('%') right=PrimaryExpression)*
+    // possible ops: 
+    PrimaryExpression ({MultiplicationExpression.left=current} op=('*'|'/'|'%'|'<<'|'>>'|'&'|'&^') right=PrimaryExpression)*
 ;
 
 /* 
@@ -115,8 +116,8 @@ PrimaryExpression returns Expression:
 ;
 
 UnaryExpression:
-    // possible ops: '+', '-', '^' 
-    op=('!') exp=SimplifiedPrimaryExpression 
+    // possible ops:  
+    op=('+'|'-'|'!'|'^') exp=SimplifiedPrimaryExpression 
 ;
 
 SimplifiedPrimaryExpression returns Expression:
