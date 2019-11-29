@@ -12,11 +12,15 @@ cache:
 
 build:
   stage: build
+  tags:
+    - netsec
   script:
     - mvn $MAVEN_CLI_OPTS install -DskipTests
 
 deploy:
   stage: deploy
+  tags:
+    - netsec
   script:
     - mvn $MAVEN_CLI_OPTS deploy -X -DskipTests
 
