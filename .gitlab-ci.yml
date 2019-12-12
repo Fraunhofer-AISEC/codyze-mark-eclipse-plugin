@@ -15,6 +15,5 @@ build:
   tags:
     - netsec
   script:
-    - mvn $MAVEN_CLI_OPTS install deploy -DskipTests
-
-
+    - mvn $MAVEN_CLI_OPTS install -DskipTests
+    - mvn $MAVEN_CLI_OPTS deploy -X -DskipTests
