@@ -63,6 +63,7 @@ The parent project uses the tycho-versions-plugin to update the version number a
 
 For a new SNAPSHOT version use:
 >>>
+# change into de.fraunhofer.aisec.mark.parent
 $ mvn org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=X.Y.Z-SNAPSHOT -Dtycho.mode=maven
 >>>
 
