@@ -60,8 +60,10 @@ If you want to start your own examples, you may have to copy your project from t
 ## Bumping version numbers
 
 The parent project uses the tycho-versions-plugin to update the version number across all (sub-)projects.
+
+For a new SNAPSHOT version use:
 >>>
-$ mvn org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=X.Y.Z -Dtycho.mode=maven
+$ mvn org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=X.Y.Z-SNAPSHOT -Dtycho.mode=maven
 >>>
 
 See here for details: [vogella Tutorial on Eclipse Tycho](https://www.vogella.com/tutorials/EclipseTycho/article.html#setting-version-numbers)
