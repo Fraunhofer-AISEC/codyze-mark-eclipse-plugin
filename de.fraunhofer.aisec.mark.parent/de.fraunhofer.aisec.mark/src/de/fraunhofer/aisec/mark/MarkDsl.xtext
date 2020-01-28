@@ -40,7 +40,8 @@ EntityStatement:
 ;
 
 VariableDeclaration:
-    'var' name=ID ( ':' type=Type )? /* ( '=' init=InitializerExpression )? */ ';'
+    //'var' name=ID ( ':' type=Type )? /* ( '=' init=InitializerExpression )? */ ';'
+    'var' name=ID ( ':' type=DotQualifiedIdentifier )? ';'
 ;
 
 InitializerExpression:
@@ -237,25 +238,19 @@ FunctionDeclaration:
     name=QualifiedName ( 
         '()' 
         | '(' (
-                params+=ELLIPSIS
-                | ( params+=ID ( ',' params+=ID )* )
-                | ( params+=ID ',' ( params+=ID ',' )* params+=ELLIPSIS ) 
+                params+=WildcardParameter
+                | ( params+=NamedParameter ( ',' params+=NamedParameter )* ( ',' params+=WildcardParameter )? )
             ) ')'
     )
 ;
 
-//ImportStatement:
-//    'incl' name=(ID | JavaImport | CppInclude)
-//;
+WildcardParameter returns Parameter:
+    var=ELLIPSIS
+;
 
-//JavaImport:
-//    ID ('.' ID)+
-//;
-//
-//CppInclude:
-//    ID ('/' ID)+ ('.' ID)?
-//;
-
+NamedParameter returns Parameter:
+    var=ID ( ':' types+=Type ( '|' types+=Type )* )?
+;
 
 OpDeclaration:
     'op' name=ID '{' (stmts+=OpStatement)* '}'
