@@ -3,7 +3,7 @@ Automatic-Module-Name: de.fraunhofer.aisec.mark.ui
 Bundle-ManifestVersion: 2
 Bundle-Name: de.fraunhofer.aisec.mark.ui
 Bundle-Vendor: Fraunhofer AISEC
-Bundle-Version: 1.1.1.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-SymbolicName: de.fraunhofer.aisec.mark.ui;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.fraunhofer.aisec.mark,
