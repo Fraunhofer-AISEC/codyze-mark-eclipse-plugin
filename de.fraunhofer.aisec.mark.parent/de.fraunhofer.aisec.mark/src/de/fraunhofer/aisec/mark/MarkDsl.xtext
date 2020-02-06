@@ -31,7 +31,7 @@ PackageDeclaration:
 
 
 EntityDeclaration:
-    'entity' name=ID ( 'isa' superType=[EntityDeclaration|ID] )? '{' content+=EntityStatement* '}'
+    'entity' name=DotQualifiedIdentifier ( 'isa' superType=[EntityDeclaration|DotQualifiedIdentifier] )? '{' content+=EntityStatement* '}'
 ;
 
 EntityStatement:
@@ -208,7 +208,7 @@ RuleStatement:
 ;
 
 AliasedEntityExpression:
-    e=[EntityDeclaration|QualifiedName] 'as' n=ID
+    e=[EntityDeclaration|DotQualifiedIdentifier] 'as' n=ID
 ;
 
 ConditionStatement:
