@@ -1,6 +1,6 @@
 package jca
 
 
-entity java.security.spec.AlgorithmParameterSpec {
-	
+entity AlgorithmParameterSpec {
+    
 }

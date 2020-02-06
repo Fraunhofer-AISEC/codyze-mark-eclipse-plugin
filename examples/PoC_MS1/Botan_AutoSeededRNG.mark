@@ -1,13 +1,13 @@
 package botan
 
-entity Botan::AutoSeededRNG isa RandomSource {
-	
-	var myValue : Botan::InitializationVector;
-	
-	op generate {
-		myValue = Botan::AutoSeededRNG::random_vec(_);
-	}
-	
+entity AutoSeededRNG isa RandomSource {
+    
+    var myValue : InitializationVector;
+    
+    op generate {
+        myValue = Botan::AutoSeededRNG::random_vec(_);
+    }
+    
 }
 
 

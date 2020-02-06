@@ -1,6 +1,6 @@
 package jca
 
 
-entity java.security.SecureRandom isa RandomSource {
-	
+entity SecureRandom isa RandomSource {
+    
 }

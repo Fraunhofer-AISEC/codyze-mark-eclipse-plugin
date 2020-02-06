@@ -1,16 +1,16 @@
 package base
 
 
-entity Cipher {
-	
-	var algorithm;
-	
+entity _Cipher {
+    
+    var algorithm;
+    
 }
 
 
 rule ankds {
-	using Cipher as c
-	ensure
-		c.algorithm in ["AES"]
-	onfail error	
+    using _Cipher as c
+    ensure
+        c.algorithm in ["AES"]
+    onfail error    
 }

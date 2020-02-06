@@ -2,7 +2,7 @@ package base
 
 
 entity RandomSource {
-	
-	op generate {}
-	
+    
+    op generate {}
+    
 }
