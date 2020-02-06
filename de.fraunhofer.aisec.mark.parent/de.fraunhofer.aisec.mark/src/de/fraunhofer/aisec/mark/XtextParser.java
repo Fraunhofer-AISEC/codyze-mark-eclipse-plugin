@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -19,16 +21,14 @@ import de.fraunhofer.aisec.mark.markDsl.MarkModel;
 
 /**
  * A standalone parser for .mark files.
- * 
- * Standalone means that this parser does not need an Eclipse/Xtext environment to operate.
- * 
- * @author dennis, julian
  *
+ * <p>Standalone means that this parser does not need an Eclipse/Xtext environment to operate.
+ *
+ * @author dennis, julian
  */
 public class XtextParser {
 
-  @Inject
-  private XtextResourceSet resourceSet;
+  @Inject private XtextResourceSet resourceSet;
 
   public XtextParser() {
     StandaloneSetup saS = new org.eclipse.emf.mwe.utils.StandaloneSetup();
@@ -42,7 +42,7 @@ public class XtextParser {
 
   /**
    * Dumps an EObject to stdout.
-   * 
+   *
    * @param mod_
    */
   public static void dump(EObject mod_) {
@@ -67,8 +67,10 @@ public class XtextParser {
 
   /**
    * Adds a MARK file to the parser.
-   * 
-   * Use this method to register all MARK files that need to be parsed, then call {@code parse()}.
+   *
+   * <p>Use this method to register all MARK files that need to be parsed, then call {@code
+   * parse()}.
+   *
    * @param f
    */
   public void addMarkFile(File f) {
@@ -76,7 +78,8 @@ public class XtextParser {
   }
 
   public void printResourceList() {
-    for (Iterator<Resource> iterator = resourceSet.getResources().iterator(); iterator.hasNext();) {
+    for (Iterator<Resource> iterator = resourceSet.getResources().iterator();
+        iterator.hasNext(); ) {
       Resource resource = iterator.next();
       System.out.println(resource.getURI().segment(resource.getURI().segmentCount() - 1));
       if (resource.getErrors().isEmpty()) {
@@ -90,15 +93,31 @@ public class XtextParser {
     }
   }
 
-  public void dumpModel() {
-    System.out.println("a");
+  public Map<URI, List<Resource.Diagnostic>> getErrors() {
+    Map<URI, List<Resource.Diagnostic>> errors = new HashMap<URI, List<Resource.Diagnostic>>();
+
+    for (Resource r : resourceSet.getResources()) {
+      errors.put(r.getURI(), r.getErrors());
+    }
+
+    return errors;
+  }
+
+  public Map<URI, List<Resource.Diagnostic>> getWarnings() {
+    Map<URI, List<Resource.Diagnostic>> warnings = new HashMap<URI, List<Resource.Diagnostic>>();
+
+    for (Resource r : resourceSet.getResources()) {
+      warnings.put(r.getURI(), r.getWarnings());
+    }
+
+    return warnings;
   }
 
   /**
    * Resolves all loaded MARK files.
-   * 
-   * The files must be registered by {@code addMarkFile()} before.
-   * 
+   *
+   * <p>The files must be registered by {@code addMarkFile()} before.
+   *
    * @return
    */
   public HashMap<String, MarkModel> parse() {
@@ -112,17 +131,14 @@ public class XtextParser {
     return models;
   }
 
-  /**
-   * Just for testing.
-   */
+  /** Just for testing. */
   public static void main(String... args) throws IOException {
     XtextParser p = new XtextParser();
 
     // Add two MARK files
-    //p.addMarkFile(new File("../../examples/Test/Rules.mark"));
-    //p.addMarkFile(new File("../../examples/Test/AES.mark"));
+    // p.addMarkFile(new File("../../examples/Test/Rules.mark"));
+    // p.addMarkFile(new File("../../examples/Test/AES.mark"));
     p.addMarkFile(new File("../../examples/PoC_MS1/JCA_Cipher.mark"));
-    
 
     // Parse them
     HashMap<String, MarkModel> parse = p.parse();
