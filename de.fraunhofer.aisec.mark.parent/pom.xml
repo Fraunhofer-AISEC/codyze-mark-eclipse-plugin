@@ -309,13 +309,6 @@
         </pluginRepository>
     </pluginRepositories>
 
-    <distributionManagement>
-        <repository>
-            <id>netsec</id>
-            <name>Netsec Snapshots</name>
-            <url>http://repository.netsec.aisec.fraunhofer.de/repository/snapshots</url>
-        </repository>
-    </distributionManagement>
 
     <profiles>
         <profile>
