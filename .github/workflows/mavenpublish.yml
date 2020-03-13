@@ -25,6 +25,6 @@ jobs:
       run: mvn  -f de.fraunhofer.aisec.mark.parent -B package --file pom.xml
 
     - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -f de.fraunhofer.aisec.mark.parent -s $GITHUB_WORKSPACE/settings.xml
+      run: mvn deploy -f de.fraunhofer.aisec.mark.parent
       env:
         GITHUB_TOKEN: ${{ github.token }}
