@@ -1,9 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.fraunhofer.aisec.mark</groupId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.0</version>
     <artifactId>de.fraunhofer.aisec.mark.parent</artifactId>
     <packaging>pom</packaging>
 
@@ -33,8 +34,8 @@
         <module>de.fraunhofer.aisec.mark.ide</module>
         <module>de.fraunhofer.aisec.mark.ui</module>
         <module>de.fraunhofer.aisec.mark.target</module>
-        <module>de.fraunhofer.aisec.mark.tests</module>
-        <module>de.fraunhofer.aisec.mark.ui.tests</module>
+        <!--<module>de.fraunhofer.aisec.mark.tests</module>
+        <module>de.fraunhofer.aisec.mark.ui.tests</module> -->
     </modules>
     <dependencyManagement>
         <dependencies>
@@ -121,9 +122,16 @@
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>tycho-versions-plugin</artifactId>
             </plugin>
-            <!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-deploy-plugin</artifactId> 
-                <executions> <execution> <id>default-deploy</id> <phase>none</phase> </execution> 
-                </executions> </plugin> -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-deploy</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
