@@ -4,17 +4,31 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.fraunhofer.aisec.mark</groupId>
-    <version>1.3.0</version>
+    <version>1.3.0-SNAPSHOT</version>
     <artifactId>de.fraunhofer.aisec.mark.parent</artifactId>
     <packaging>pom</packaging>
 
     <distributionManagement>
+       <!--
+        Deployment to Github Packages is unusable as it requires user authentication.
+        If that changes at a later time, we might switch from Maven central to Github -->
+       <!--
        <repository>
          <id>github</id>
          <name>GitHub Fraunhofer AISEC Apache Maven Packages</name>
          <url>https://maven.pkg.github.com/Fraunhofer-AISEC/codyze-mark-eclipse-plugin</url>
-       </repository>
+       </repository> -->
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/
+            </url>
+        </repository>
     </distributionManagement>
+
     
     <properties>
         <xtextVersion>2.17.0</xtextVersion>
@@ -23,12 +37,37 @@
         <maven.compiler.target>11</maven.compiler.target>
         <!-- Tycho settings -->
         <tycho-version>1.3.0</tycho-version>
+
         <!-- Define overridable properties for tycho-surefire-plugin -->
         <platformSystemProperties></platformSystemProperties>
         <moduleProperties></moduleProperties>
         <systemProperties></systemProperties>
         <tycho.testArgLine></tycho.testArgLine>
+        <!-- License -->
+        <license.licenseName>epl-license</license.licenseName>
     </properties>
+
+    <scm>
+        <connection>scm:git:git://github.com/Fraunhofer-AISEC/codyze-mark-eclipse-plugin.git</connection>
+        <developerConnection>scm:git:git@github.com:Fraunhofer-AISEC/codyze-mark-eclipse-plugin.git</developerConnection>
+        <url>https://github.com/Fraunhofer-AISEC/codyze-mark-eclipse-plugin</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>Eclipse Public License 2.0</name>
+            <comments>
+                This program and the accompanying materials are made
+                available under the terms of the Eclipse Public License 2.0
+                which accompanies this distribution, and is available at
+                https://www.eclipse.org/legal/epl-2.0/
+
+                SPDX-License-Identifier: EPL-2.0
+            </comments>
+        </license>
+    </licenses>
+
     <modules>
         <module>de.fraunhofer.aisec.mark</module>
         <module>de.fraunhofer.aisec.mark.ide</module>
@@ -129,6 +168,30 @@
                     <execution>
                         <id>default-deploy</id>
                         <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.7</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.0.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
@@ -347,6 +410,57 @@
                 <moduleProperties>--add-modules=ALL-SYSTEM</moduleProperties>
             </properties>
         </profile>
+
+        <!-- GPG Signature on release -->
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <keyname>${gpg.keyId}</keyname>
+                                </configuration>                                
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <version>2.5.3</version>
+                        <configuration>
+                            <localCheckout>true</localCheckout>
+                            <pushChanges>false</pushChanges>
+                            <mavenExecutorId>forked-path</mavenExecutorId>
+                            <arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.apache.maven.scm</groupId>
+                                <artifactId>maven-scm-provider-gitexe</artifactId>
+                                <version>1.9.5</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>                    
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 
     <dependencies>
