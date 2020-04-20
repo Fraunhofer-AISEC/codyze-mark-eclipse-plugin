@@ -8,27 +8,23 @@ generate markDsl "http://www.aisec.fraunhofer.de/mark/MarkDsl"
 
 MarkModel:
     package=PackageDeclaration
-//	imports+=ImportDeclaration*
     /* either an entity or a rule, multiple per file and in arbitrary order */
     ( decl+=EntityDeclaration | rule+=RuleDeclaration )+
-/*
-	oids+=ObjectIdentifier*
-	msg+=MessageDeclaration*
-*/
 ;
 
 
+/**
+ * Package declaration in MARK
+ */
 
 PackageDeclaration:
     'package' name=DotQualifiedIdentifier
 ;
 
 
-
-//ImportDeclaration:
-//	'import' name=QualifiedName;
-
-
+/**
+ * Entity(-ies)
+ */
 
 EntityDeclaration:
     'entity' name=DotQualifiedIdentifier ( 'isa' superType=[EntityDeclaration|DotQualifiedIdentifier] )? '{' content+=EntityStatement* '}'
@@ -39,199 +35,26 @@ EntityStatement:
     | OpDeclaration 
 ;
 
+
+/**
+ * Grammar rules for variable declarations of a MARK entity
+ */
+
 VariableDeclaration:
-    //'var' name=ID ( ':' type=Type )? /* ( '=' init=InitializerExpression )? */ ';'
     'var' name=ID ( ':' type=DotQualifiedIdentifier )? ';'
 ;
 
-InitializerExpression:
-	Literal | LiteralListExpression;
 
-
-
-
-QualifiedName:
-	ID
-	| JavaQualifiedName
-	| CppQualifiedName
-;
-	
-JavaQualifiedName:
-    ID ('.' ID)+
-;
-
-CppQualifiedName:
-    ID ('::' ID)+ 
-;
-
-Type:
-    UniversalType 
-;
-
-/*
- * This type rule at least enforces that users cannot mix Java and C++ style qualified name separator
- */
-UniversalType:
-    ID (('.' ID)+ | ('::' ID)+)? (Template)? ('*' | '&' | '[]')?
-;
-
-Template:
-    '<' Type '>'
-;
-
-
-Expression:
-	LogicalOrExpression | OrderExpression
-;
-
-LogicalOrExpression returns Expression:
-	LogicalAndExpression ({LogicalOrExpression.left=current} op=('||') right=LogicalAndExpression)*
-;
-
-LogicalAndExpression returns Expression:
-	ComparisonExpression ({LogicalAndExpression.left=current} op=('&&') right=ComparisonExpression)*
-;
-
-ComparisonExpression returns Expression:
-    // to skip AdditionExpression replace with MultiplicationExpression
-    AdditionExpression ({ComparisonExpression.left=current} op=('=='|'!='|'<'|'<='|'>'|'>='|'in'|'like') right=AdditionExpression)*
-;
-
-AdditionExpression returns Expression:
-	MultiplicationExpression ({AdditionExpression.left=current} op=('+'|'-'|'|'|'^') right=MultiplicationExpression)*
-;
-
-MultiplicationExpression returns Expression:
-    // possible ops: 
-    PrimaryExpression ({MultiplicationExpression.left=current} op=('*'|'/'|'%'|'<<'|'>>'|'&'|'&^') right=PrimaryExpression)*
-;
-
-/* 
- * This is a little hack to avoid superfluous UnaryExpression nodes in the EObject AST. 
- * Now, UnaryExpression nodes are generated only if a unary operator is detected. 
- * In addition, we prevent expressions like '!!a'. 
- */
-PrimaryExpression returns Expression:
-	UnaryExpression
-	| SimplifiedPrimaryExpression
-;
-
-UnaryExpression:
-    // possible ops:  
-    op=('+'|'-'|'!'|'^') exp=SimplifiedPrimaryExpression 
-;
-
-SimplifiedPrimaryExpression returns Expression:
-    Literal 
-    | Operand 
-    | FunctionCallExpression 
-    | LiteralListExpression 
-    | '(' LogicalOrExpression ')'
-;
-
-Operand:
-    {Operand} operand=OperandName
-;
-
-OperandName:
-    QualifiedName
-;
-
-
-LiteralListExpression:
-    '[' values+=Literal (',' values+=Literal)* ']'
-;
-
-
-/*
- * Grammar rules to specify the order of actions/events/operations
+/**
+ * Grammar rules for a operation declaration of a MARK entity
  */
 
-OrderExpression:
-    {OrderExpression} 'order' exp=SequenceExpression
+OpDeclaration:
+    'op' name=ID '{' (stmts+=OpStatement)* '}'
 ;
 
-
-SequenceExpression returns OrderExpression:
-    AlternativeExpression ({SequenceExpression.left=current} op=',' right=AlternativeExpression)*
-;
-
-AlternativeExpression returns OrderExpression:
-    TermExpression ({AlternativeExpression.left=current} op='|' right=TermExpression)*
-;
-
-
-ExclusionExpression:
-    op='!' exp=SimplifiedTermExpression
-;
-
-RepetitionExpression returns OrderExpression:
-    SimplifiedTermExpression ({RepetitionExpression.expr=current} op=('?'|'*'|'+'))?
-;
-
-TermExpression returns OrderExpression:
-    ExclusionExpression
-    | RepetitionExpression
-;
-
-
-GroupingExpression returns OrderExpression:
-    '(' SequenceExpression ')'
-;
-
-SimplifiedTermExpression returns OrderExpression:
-    Terminal
-    | GroupingExpression
-;
-
-
-Terminal:
-    {Terminal} entity=ID '.' op=ID '()'
-;
-
-FunctionCallExpression:
-    name=QualifiedName ( '()' | '(' (args+=Argument (',' args+=Argument)*)? ')' )
-;
-
-Argument:
-    LogicalOrExpression
-;
-
-
-
-RuleDeclaration:
-	'rule' name=ID '{' stmt=RuleStatement '}'
-;
-
-RuleStatement:
-	'using' entities+=AliasedEntityExpression (',' entities+=AliasedEntityExpression)* (cond=ConditionStatement)? ensure=EnsureStatement 'onfail' msg=ID
-;
-
-AliasedEntityExpression:
-    e=[EntityDeclaration|DotQualifiedIdentifier] 'as' n=ID
-;
-
-ConditionStatement:
-    'when' exp=LogicalOrExpression
-;
-
-
-EnsureStatement:
-    'ensure' exp=Expression
-;
-
-
-
-//EvidenceDeclaration:
-//    'evidence' name=[EntityDeclaration] '{' (stmts+=EvidenceStatement ';')+ '}'
-//;
-//
-//EvidenceStatement:
-//    CallStatement | DeclarationStatement | ImportStatement
-//;
-
-CallStatement:
-    'call' (forbidden='forbidden')? call=FunctionDeclaration /* ('where' cond=WhereExpression)? */
+OpStatement:
+    (forbidden='forbidden')? (var=ID '=')? call=FunctionDeclaration ';'
 ;
 
 FunctionDeclaration:
@@ -252,47 +75,197 @@ NamedParameter returns Parameter:
     var=ID ( ':' types+=Type ( '|' types+=Type )* )?
 ;
 
-OpDeclaration:
-    'op' name=ID '{' (stmts+=OpStatement)* '}'
+Type:
+    UniversalType 
 ;
 
-OpStatement:
-    (forbidden='forbidden')? (var=ID '=')? call=FunctionDeclaration ';'
+/*
+ * This type rule at least enforces that users cannot mix Java and C++ style qualified name separator
+ */
+UniversalType:
+    ID (('.' ID)+ | ('::' ID)+)? (Template)? ('*' | '&' | '[]')?
 ;
 
-//MessageDeclaration:
-//	'message' name=QualifiedName '{' msg=MessageStatement '}'
-//;
-//
-//MessageStatement:
-//	s=MessageSeverity
-//	l=MessageLanguage?
-//	c=MessageContent	
-//;
-//
-//MessageSeverity:
-//	'severity' severity=('error'|'warning'|'info'|'debug') ';'
-//;
-//
-//MessageLanguage:
-//	'lang' language=ID ';' 
-//;
-//
-//MessageContent:
-//	'content' content=StringLiteral ';'
-//;
-
-//ObjectIdentifier:
-//    ('OID.')? INT ('.' INT)*
-//;
-
-
-
-LiteralList:
-	lit+=Literal (',' lit+=Literal)*
+Template:
+    '<' Type '>'
 ;
 
 
+/**
+ * Rule(s) in MARK
+ */
+
+RuleDeclaration:
+	'rule' name=ID '{' stmt=RuleStatement '}'
+;
+
+RuleStatement:
+	'using' entities+=AliasedEntityExpression (',' entities+=AliasedEntityExpression)* (cond=ConditionStatement)? ensure=EnsureStatement 'onfail' msg=ID
+;
+
+AliasedEntityExpression:
+    e=[EntityDeclaration|DotQualifiedIdentifier] 'as' n=ID
+;
+
+ConditionStatement:
+    'when' exp=LogicalOrExpression
+;
+
+EnsureStatement:
+    'ensure' exp=Expression
+;
+
+
+/**
+ * Expression(s)
+ */
+
+Expression:
+	LogicalOrExpression | OrderExpression
+;
+
+/*
+ * Grammar rules for Boolean expressions
+ * 
+ * Specify a Boolean condition that is checked for validity during an evaluation of a MARK rule 
+ */
+
+LogicalOrExpression returns Expression:
+	LogicalAndExpression ({LogicalOrExpression.left=current} op=('||') right=LogicalAndExpression)*
+;
+
+LogicalAndExpression returns Expression:
+	ComparisonExpression ({LogicalAndExpression.left=current} op=('&&') right=ComparisonExpression)*
+;
+
+ComparisonExpression returns Expression:
+    AdditionExpression ({ComparisonExpression.left=current} op=('=='|'!='|'<'|'<='|'>'|'>='|'in'|'like') right=AdditionExpression)*
+;
+
+AdditionExpression returns Expression:
+	MultiplicationExpression ({AdditionExpression.left=current} op=('+'|'-'|'|'|'^') right=MultiplicationExpression)*
+;
+
+MultiplicationExpression returns Expression:
+    PrimaryExpression ({MultiplicationExpression.left=current} op=('*'|'/'|'%'|'<<'|'>>'|'&'|'&^') right=PrimaryExpression)*
+;
+
+/* 
+ * This is a little hack to avoid superfluous UnaryExpression nodes in the EObject AST. 
+ * Now, UnaryExpression nodes are generated only if a unary operator is detected. 
+ * In addition, we prevent expressions like '!!a'. 
+ */
+PrimaryExpression returns Expression:
+	UnaryExpression
+	| SimplifiedPrimaryExpression
+;
+
+UnaryExpression:
+    op=('+'|'-'|'!'|'^') exp=SimplifiedPrimaryExpression 
+;
+
+SimplifiedPrimaryExpression returns Expression:
+    Literal 
+    | Operand 
+    | FunctionCallExpression 
+    | LiteralListExpression 
+    | '(' LogicalOrExpression ')'
+;
+
+Operand:
+    {Operand} operand=OperandName
+;
+
+OperandName:
+    QualifiedName
+;
+
+FunctionCallExpression:
+    name=QualifiedName ( '()' | '(' (args+=Argument (',' args+=Argument)*)? ')' )
+;
+
+Argument:
+    LogicalOrExpression
+;
+
+LiteralListExpression:
+    '[' values+=Literal (',' values+=Literal)* ']'
+;
+
+
+/*
+ * Grammar rules for order expressions
+ * 
+ * Specify an order for operations of an entity 
+ */
+
+OrderExpression:
+    {OrderExpression} 'order' exp=SequenceExpression
+;
+
+SequenceExpression returns OrderExpression:
+    AlternativeExpression ({SequenceExpression.left=current} op=',' right=AlternativeExpression)*
+;
+
+AlternativeExpression returns OrderExpression:
+    TermExpression ({AlternativeExpression.left=current} op='|' right=TermExpression)*
+;
+
+TermExpression returns OrderExpression:
+    ExclusionExpression
+    | RepetitionExpression
+;
+
+ExclusionExpression:
+    op='!' exp=SimplifiedTermExpression
+;
+
+RepetitionExpression returns OrderExpression:
+    SimplifiedTermExpression ({RepetitionExpression.expr=current} op=('?'|'*'|'+'))?
+;
+
+SimplifiedTermExpression returns OrderExpression:
+    Terminal
+    | GroupingExpression
+;
+
+Terminal:
+    {Terminal} entity=ID '.' op=ID '()'
+;
+
+GroupingExpression returns OrderExpression:
+    '(' SequenceExpression ')'
+;
+
+
+/**
+ * Common rule(s)
+ * 
+ * Rules that are used by multiple other rules
+ */
+
+DotQualifiedIdentifier:
+    ID ( '.' ID )*
+;
+
+QualifiedName:
+	ID
+	| JavaQualifiedName
+	| CppQualifiedName
+;
+	
+JavaQualifiedName:
+    ID ('.' ID)+
+;
+
+CppQualifiedName:
+    ID ('::' ID)+ 
+;
+
+
+/**
+ * Literal(s)
+ */
 
 Literal:
 	{IntegerLiteral} value=IntegerLiteral 
@@ -315,14 +288,9 @@ StringLiteral:
 ;
 
 
-// Common
-
-DotQualifiedIdentifier:
-    ID ( '.' ID )*
-;
-
-
-// Tokens 
+/**
+ * Additional token(s)
+ */
 
 terminal ELLIPSIS:
     '...'
