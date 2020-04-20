@@ -11,9 +11,9 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
 
 /**
- * This is the code generator that creates Crymlin (= Gremlin) queries out from a MARK policy.
+ * This is code generator creates an abstract syntax tree from a MARK file. It is meant for debugging purposes.
  * 
- * It uses the Xtext template engine [1] to translate concepts from MARK into valid Crymlin.
+ * It uses the Xtext template engine [1].
  * 
  * [1] See https://www.eclipse.org/Xtext/documentation/303_runtime_concepts.html#code-generation
  */
@@ -22,11 +22,11 @@ class MarkDslGenerator extends AbstractGenerator {
 	/**
 	 * Main code generation method that is called whenever a MARK file is saved.
 	 * 
-	 * Every time a MARK file is saved, a corresponding src-gen/NAME_crymlin.java file is generated, overwriting the possibly existing file.
+	 * Every time a MARK file is saved, a corresponding src-gen/PACKAGE.NAME_mark.ast file is generated, overwriting the possibly existing file.
 	 */
 	override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
-		// We create a new Crymlin file and call toCrymlin() on our model
-		fsa.generateFile(resource.className + "_crymlin.java", toCrymlin(resource.contents.head as MarkModel))
+		fsa.generateFile(resource.packageName + "." + resource.className + "_mark.ast",
+			toAST(resource.contents.head as MarkModel))
 	}
 
 	/**
@@ -38,17 +38,24 @@ class MarkDslGenerator extends AbstractGenerator {
 	}
 
 	/**
+	 * Helper method that returns the package name of a MARK file. 
+	 */
+	def packageName(Resource res) {
+		var mark = (res.contents.head as MarkModel)
+		return mark.package.name
+	}
+
+	/**
 	 * Translates a MARK model into Crymlin.
 	 * 
 	 * Everything between triple-ticks (''') is returned as a string. Within that template, Xtend expressions can be used for variables and control flow.
 	 */
-	def toCrymlin(MarkModel model) '''
+	def toAST(MarkModel model) '''
 		/*
-		 * Auto-generated Crymlin file, do not edit manually.
+		 * Auto-generated AST, do not edit manually.
 		 *
 		 * This file has been created from MARK and will be overwritten at every change in the original file. 
 		*/
-«««		«printBody(model)»
 		«dump(model, "")»
 	'''
 
@@ -63,60 +70,11 @@ class MarkDslGenerator extends AbstractGenerator {
 
 		}
 		res += "\n"
-		
+
 		for (f : mod_.eContents) {
 			res += f.dump(indent + "  ")
 		}
 		return res
 	}
 
-//	def CharSequence printBody(MarkModel model) {
-//		var result = "";
-//
-//		result += model.package + "\n";
-//		for (import : model.imports) {
-//			result += import + "\n";
-//		}
-//		result += model.decl + "\n";
-//
-//		for (vardecl : model.decl.content) {
-//			result += vardecl + "\n";
-//		}
-//
-//		return result;
-//	}
-
-/**
- * Prints a sequence of terms, concatenated with ".out(..)".
- * 
- * EXPLANATION: This style opens a template environment with triple-ticks ('''). Within that template, we use XTend expressions («..»)to refer to variables and a FOR loop.
- * The template style make sense for larger predefined templates with only few dynamic parts. In this example here, it looks pretty confusing due to the constant switching between modes.  
- */
-//	def CharSequence printSequence(
-//		Sequence expr) '''«expr.headTerm.name»(«printArgumentList(expr.headTerm.parameters)»)«FOR term : expr.tailTerms».out(«term.name»(«printArgumentList(term.parameters)»))«ENDFOR»'''
-/**
- * Prints a sequence of terms, concatenated with ".out(..)".
- * 
- * It does EXACTLY the same as printSequence().
- * 
- * EXPLANATION: This style does NOT open a template environment but simply constructs the returned string in XTend (a Java dialect).
- */
-//	def CharSequence printSequenceDEMO_XTend(Sequence expr) {
-//		var res = expr.headTerm.name;
-//		for (term : expr.tailTerms) {
-//			res += term.name + "(" + printArgumentList(term.parameters) + ")"
-//		}
-//		return res;
-//	}
-/**
- * Prints a comma-separated sequence of arguments.
- */
-//	def printArgumentList(ArgumentList list) '''«list.head»«FOR arg : list.tail»,«arg»«ENDFOR»'''
-//	def CharSequence printUsingStmt(UsingStmt stmt) {
-//		return "// USING";
-//	}
-// TODO Unfinished
-//	def CharSequence printLetStmt(LetStmt stmt) '''
-//	// «stmt.toString»
-//	Object «stmt.name» = crymlin.«printSequence(stmt.expression)»;'''
 }
