@@ -12,13 +12,4 @@ import org.eclipse.xtext.ui.label.DefaultDescriptionLabelProvider
  */
 class MarkDslDescriptionLabelProvider extends DefaultDescriptionLabelProvider {
 
-	// Labels and icons can be computed like this:
-	
-//	override text(IEObjectDescription ele) {
-//		ele.name.toString
-//	}
-//	 
-//	override image(IEObjectDescription ele) {
-//		ele.EClass.name + '.gif'
-//	}
 }
