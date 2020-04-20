@@ -1,5 +1,5 @@
-package de.fhg.aisec.mark.crypto.base
+package de.fraunhofer.aisec.mark.crypto.base
 
-entity Twofish isa BlockCipher {
+entity Twofish {
 	
 }

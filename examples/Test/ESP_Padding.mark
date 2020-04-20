@@ -1,5 +1,5 @@
 package a
 
-entity ESP_Padding isa PaddingScheme {
+entity ESP_Padding {
 	
 }

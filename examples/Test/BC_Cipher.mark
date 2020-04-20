@@ -1,53 +1,28 @@
 package a
 
 
-import AES
-
-
-MyJCACipher implements AES {
+entity MyJCACipher {
 	
 	
-	String algorithm;
+	var algorithm;
 	
-	startpoint {
-		javax.crypto.Cipher.getInstance(algorithm, _) | javax.crypto.Cipher.getInstance() | doFinal()
-		
+	op bla {
 		
 	}
+
 	
-	op bla (algorithm) {
-		switch (BlockCipher) {
-			case "AES": AES{}
-		}
-	}
-	
-}
-
-
-
-
-
-
-	String algorithm;
-	
-    startpoint {
-    	import javax.crypto
-		!javax.crypto.MyBadCipher	
-    }
-
-
-	on init() {
-		javax.crypto.Cipher.getInstance(algorithm, _) | javax.crypto.Cipher.getInstance()		
-		javax.crypto.Cipher
+	op init {
+		javax.crypto.Cipher.getInstance(algorithm, _);
+		javax.crypto.Cipher.getInstance();		
 	}
 
-	op update(algorithm) {
-		javax.crypto.Cipher.update()
+	op update {
+		javax.crypto.Cipher.update();
 	}
 	
 	
-	op encrypt(algorithm) {
-		javax.crypto.Cipher.doFinal()
+	op encrypt {
+		javax.crypto.Cipher.doFinal();
 	}
 	
 }
