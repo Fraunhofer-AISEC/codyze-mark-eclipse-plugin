@@ -68,6 +68,13 @@ Now, to see the DSL plugins in action, launch _"MARK.product"_ This will spawn a
 The parent project uses the tycho-versions-plugin to update the version number across all (sub-)projects.
 
 For a new SNAPSHOT version use:
+<<<<<<< HEAD
+=======
+>>>
+\# change into de.fraunhofer.aisec.mark.parent
+$ mvn org.eclipse.tycho:tycho-versions-plugin:set-version -DnewVersion=X.Y.Z-SNAPSHOT -Dtycho.mode=maven
+>>>
+>>>>>>> origin/master
 
 ```
 $ # change into de.fraunhofer.aisec.mark.parent

@@ -1,60 +1,26 @@
 package a.a
 
-
 entity a {
 	var a : int;
 	var b : a.b.c;
-	var c : a::b::c;
-	var d : a*;
-	var e : b&;
-	var f : a[];
-	var g : a::a<b>;
 
-	op blub() {
-		call a();
-		call b(a);
-		call a::b(a);
-		call a.b(a);
-		call b(a, b, c);
+	op blub {
+		a();
+		b(a);
+		a::b(a);
+		a.b(a);
+		b(a, b, c);
 		
-		call forbidden z();
+		forbidden z();
 		
-		decl a = a();
-		decl b = a::b();
+		a = a();
+		b = a::b();
 	}	
 }
 
-
-entity b isa a {
-	
-}
-
-
 rule ab {
-	for a as asd
+	using a as asd
 	ensure 
-		order a.cm()
+		order asd.cm()
 	onfail error
 }
-
-//package de.fhg.aisec.mark.crypto.base
-//
-//
-//entity test::sa {
-//	var t : Botan::secure_vector<Botan::secure_vector<int>>&; // C++ templates, basic type modifiers (signed/unsigned, short/long/long long)
-//}
-//
-//rule ab {
-//	for test::sa
-//	ensure a+b
-//	onfail a
-//}
-//
-////order a | (a? , !b)* | cit;
-//
-//javax.crypto.Cipher.getInstance()
-//javax.crypto.Cipher.getInstance(a)
-//javax.crypto.Cipher.getInstance(b,c,d,_)
-//getInstance()
-//getInstance(a,_)
-//std::cout()

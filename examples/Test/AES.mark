@@ -1,6 +1,6 @@
-package de.fhg.aisec.mark.crypto.base
+package de.fraunhofer.aisec.mark.crypto.base
 
-entity AES isa BlockCipher {
+entity AES {
 	
 	/* 
 	 * variables/properties of an AES block cipher
@@ -8,37 +8,15 @@ entity AES isa BlockCipher {
 	 * these relate to abstract concepts/descriptions from technical specifications such as 
 	 * https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf
 	 */
-	var _block_size : uint = 128;  // default value
-	var _supported_key_length : []uint = [128, 192, 256];
+	var _block_size;
+	var _supported_key_length;
 	
 	var key : SecretKey;
 	
 	
-	/*
-	 * invariants that must be true for an instance of an AES block cipher
-	 */
-	 
-	// just naming a variable checks whether it is set
-	// i.e. 'key && key.length in key_length' ensures that a key was set before checking that 
-	// the length of the key is a valid key length supported by AES
-	assert (key && key.length in key_length) onfail IMPROPER_KEY_LENGTH;
+	op init {
 	
-	
-	op init (key) {
-//		assert (key.length in key_length) onfail IMPROPER_KEY_LENGTH;	
 	}
-	
-//	op process {
-//		
-//	}
-//	
-//	op done {
-//		
-//	}
-//	
-//	op reset {
-//		key = nil;
-//	}
 	
 }
 

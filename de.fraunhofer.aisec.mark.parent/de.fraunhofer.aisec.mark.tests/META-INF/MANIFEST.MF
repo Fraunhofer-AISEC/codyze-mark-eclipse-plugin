@@ -3,7 +3,11 @@ Automatic-Module-Name: de.fraunhofer.aisec.mark.tests
 Bundle-ManifestVersion: 2
 Bundle-Name: de.fraunhofer.aisec.mark.tests
 Bundle-Vendor: Fraunhofer AISEC
+<<<<<<< HEAD
 Bundle-Version: 1.3.0
+=======
+Bundle-Version: 1.4.0.qualifier
+>>>>>>> origin/master
 Bundle-SymbolicName: de.fraunhofer.aisec.mark.tests;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: de.fraunhofer.aisec.mark,

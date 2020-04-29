@@ -4,12 +4,12 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 
 import org.junit.Test;
-import de.fraunhofer.aisec.mark.markDsl.MarkModel;
+
 import de.fraunhofer.aisec.mark.XtextParser;
+import de.fraunhofer.aisec.mark.markDsl.MarkModel;
 
 /**
  * Unit test for the MARK standalone parser.

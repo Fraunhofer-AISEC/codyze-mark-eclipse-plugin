@@ -1,6 +1,6 @@
-package de.fhg.aisec.mark.crypto.base
+package de.fraunhofer.aisec.mark.crypto.base
 
-entity CBC isa CipherMode {
+entity CBC {
 	
 	var bc : BlockCipher;
 	var iv : InitializationVector;

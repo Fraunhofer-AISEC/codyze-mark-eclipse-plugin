@@ -1,28 +1,10 @@
-package de.fhg.aisec.mark.crypto.base
+package de.fraunhofer.aisec.mark.crypto.base
 
 entity BlockCipher {
 	
-	var block_size : uint;
-	var supported_key_length : []uint;
+	var block_size;
+	var supported_key_length;
 	
 	var key : SecretKey;
-
-	
-//	op create() BlockCipher {
-//		this;
-//	}
-//	
-//	op set_key(k SecretKey) {
-//		assert (k && k.length in supported_key_length) onfail IMPROPER_KEY_LENGTH;
-//		key = k;
-//	}
-//	
-//	op process(block []byte) (output []byte) {
-		assert (block.length * 8 == block_size) onfail IMPROPER_INPUT_LENGTH_FOR_BLOCK_SIZE;
-//	}
-//	
-//	op reset() {
-//		key = nil;
-//	}
 
 }
