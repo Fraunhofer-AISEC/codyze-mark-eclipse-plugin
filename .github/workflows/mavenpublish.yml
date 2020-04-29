@@ -20,7 +20,7 @@ jobs:
           java-version: 1.12
 
       - name: Build with Maven
-        run: mvn -B package -f de.fraunhofer.aisec.mark.parent --file pom.xml -DskipTests
+        run: mvn -B clean -B package -f de.fraunhofer.aisec.mark.parent --file pom.xml -DskipTests
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
