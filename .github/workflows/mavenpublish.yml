@@ -31,11 +31,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Deploy to GitHub package
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          mkdir -p ~/.m2
-          echo "<settings><servers><server><id>github</id><username>x-access-token</username><password>${GITHUB_TOKEN}</password></server></servers></settings>" > ~/.m2/settings.xml
-          cd de.fraunhofer.aisec.mark.parent
-          mvn -Dmaven.test.skip=true --file pom.xml -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/Fraunhofer-AISEC/codyze-mark-eclipse-plugin -Dtoken=${{ secrets.GITHUB_TOKEN }} deploy
+     # - name: Deploy to GitHub package
+     #   env:
+     #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+     #   run: |
+     #     mkdir -p ~/.m2
+     #     echo "<settings><servers><server><id>github</id><username>x-access-token</username><password>${GITHUB_TOKEN}</password></server></servers></settings>" > ~/.m2/settings.xml
+     #     cd de.fraunhofer.aisec.mark.parent
+     #     mvn -Dmaven.test.skip=true --file pom.xml -DaltDeploymentRepository=github::default::https://maven.pkg.github.com/Fraunhofer-AISEC/codyze-mark-eclipse-plugin -Dtoken=${{ secrets.GITHUB_TOKEN }} deploy
