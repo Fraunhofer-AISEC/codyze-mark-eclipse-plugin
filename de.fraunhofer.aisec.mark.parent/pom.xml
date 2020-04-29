@@ -10,9 +10,9 @@
 
     <distributionManagement>
        <repository>
-         <id>ossrh</id>
-         <name>OSS Nexus</name>
-         <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+         <id>github</id>
+         <name>GitHub Fraunhofer AISEC Apache Maven Packages</name>
+         <url>https://maven.pkg.github.com/Fraunhofer-AISEC/codyze-mark-eclipse-plugin</url>
        </repository>
     </distributionManagement>
     
