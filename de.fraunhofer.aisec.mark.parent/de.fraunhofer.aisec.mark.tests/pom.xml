@@ -4,11 +4,7 @@
 	<parent>
 		<groupId>de.fraunhofer.aisec.mark</groupId>
 		<artifactId>de.fraunhofer.aisec.mark.parent</artifactId>
-<<<<<<< HEAD
-		<version>1.3.0</version>
-=======
 		<version>1.4.0-SNAPSHOT</version>
->>>>>>> origin/master
 	</parent>
 	<artifactId>de.fraunhofer.aisec.mark.tests</artifactId>
 	<packaging>eclipse-test-plugin</packaging>
