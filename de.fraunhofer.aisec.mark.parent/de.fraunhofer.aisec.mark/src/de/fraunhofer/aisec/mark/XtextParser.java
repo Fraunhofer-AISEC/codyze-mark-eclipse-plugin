@@ -7,16 +7,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.mwe.utils.StandaloneSetup;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.XtextResourceSet;
+
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+
 import de.fraunhofer.aisec.mark.markDsl.MarkModel;
 
 /**
@@ -31,10 +33,6 @@ public class XtextParser {
   @Inject private XtextResourceSet resourceSet;
 
   public XtextParser() {
-    StandaloneSetup saS = new org.eclipse.emf.mwe.utils.StandaloneSetup();
-    saS.setPlatformUri("./");
-    saS.setScanClassPath(false);
-
     Injector injector = new MarkDslStandaloneSetup().createInjectorAndDoEMFRegistration();
     injector.injectMembers(this);
     resourceSet.addLoadOption(XtextResource.OPTION_RESOLVE_ALL, Boolean.TRUE);
