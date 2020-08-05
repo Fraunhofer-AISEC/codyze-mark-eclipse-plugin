@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>de.fraunhofer.aisec.mark</groupId>
 		<artifactId>de.fraunhofer.aisec.mark.parent</artifactId>
-		<version>1.4.0-SNAPSHOT</version>
+		<version>1.5.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>de.fraunhofer.aisec.mark.ide</artifactId>
 	<packaging>eclipse-plugin</packaging>
