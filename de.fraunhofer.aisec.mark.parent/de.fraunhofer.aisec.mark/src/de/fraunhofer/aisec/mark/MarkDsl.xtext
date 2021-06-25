@@ -100,7 +100,7 @@ RuleDeclaration:
 ;
 
 RuleStatement:
-	'using' entities+=AliasedEntityExpression (',' entities+=AliasedEntityExpression)* (cond=ConditionStatement)? ensure=EnsureStatement 'onfail' msg=ID
+	'using' entities+=AliasedEntityExpression (',' entities+=AliasedEntityExpression)* (cond=ConditionStatement)? ensure=EnsureStatement (action=Action | 'onfail' msg=ID)
 ;
 
 AliasedEntityExpression:
@@ -113,6 +113,10 @@ ConditionStatement:
 
 EnsureStatement:
     'ensure' exp=Expression
+;
+
+enum Action:
+	INFO='info' | WARN='warn' | FAIL='fail'
 ;
 
 
