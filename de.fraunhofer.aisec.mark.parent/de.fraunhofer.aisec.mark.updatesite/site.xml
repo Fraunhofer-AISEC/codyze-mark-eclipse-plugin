@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/de.fraunhofer.aisec.mark.feature_1.3.0.202105181250.jar" id="de.fraunhofer.aisec.mark.feature" version="1.3.0.202105181250">
+      <category name="codyze"/>
+   </feature>
+   <category-def name="codyze" label="Codyze"/>
+</site>
