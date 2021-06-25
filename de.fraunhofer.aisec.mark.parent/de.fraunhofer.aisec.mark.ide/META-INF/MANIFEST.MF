@@ -10,6 +10,6 @@ Require-Bundle: de.fraunhofer.aisec.mark,
  org.eclipse.xtext.ide,
  org.eclipse.xtext.xbase.ide,
  org.antlr.runtime;bundle-version="[3.2.0,3.2.1)"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: de.fraunhofer.aisec.mark.ide.contentassist.antlr.internal,
  de.fraunhofer.aisec.mark.ide.contentassist.antlr
