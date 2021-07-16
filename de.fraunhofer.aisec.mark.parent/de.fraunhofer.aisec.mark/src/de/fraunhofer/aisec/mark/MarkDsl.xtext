@@ -9,7 +9,7 @@ generate markDsl "http://www.aisec.fraunhofer.de/mark/MarkDsl"
 MarkModel:
     package=PackageDeclaration
     /* either an entity or a rule, multiple per file and in arbitrary order */
-    ( decl+=EntityDeclaration | annotations+=AnnotationDeclaration | rule+=RuleDeclaration )+
+    ( decl+=EntityDeclaration | rule+=RuleDeclaration )+
 ;
 
 
@@ -27,7 +27,7 @@ PackageDeclaration:
  */
 
 EntityDeclaration:
-    (annotations+=Annotation)* 'entity' name=DotQualifiedIdentifier ( 'isa' superType=[EntityDeclaration|DotQualifiedIdentifier] )? '{' content+=EntityStatement* '}'
+    'entity' name=DotQualifiedIdentifier ( 'isa' superType=[EntityDeclaration|DotQualifiedIdentifier] )? '{' content+=EntityStatement* '}'
 ;
 
 EntityStatement:
@@ -96,7 +96,7 @@ Template:
  */
 
 RuleDeclaration:
-	(annotations+=Annotation)* 'rule' name=ID '{' stmt=RuleStatement '}'
+	'rule' name=ID '{' stmt=RuleStatement '}'
 ;
 
 RuleStatement:
@@ -243,26 +243,6 @@ GroupingExpression returns OrderExpression:
 
 
 /**
- * Annotations
- */
-
-AnnotationDeclaration:
-	'annotation' name=ID '{' fields+=AnnotationField* '}'
-;
-
-AnnotationField:
-	'var' name=ID (':' type=MType)? ('=' default=(Literal|LiteralListExpression))? ';'
-;
-
-Annotation:
-	'@' name=[AnnotationDeclaration] ('(' args+=AnnotationArgument (',' args+=AnnotationArgument)* ')')?
-;
-
-AnnotationArgument:
-	(field=ID '=')? value=(Literal | LiteralListExpression)
-;
-
-/**
  * Common rule(s)
  * 
  * Rules that are used by multiple other rules
@@ -286,13 +266,6 @@ CppQualifiedName:
     ID ('::' ID)+ 
 ;
 
-
-/**
- * MARK types
- */
-enum MType:
-	BOOL='bool' | NUMERIC='numeric' | STRING='string' | LIST='list'
-;
 
 /**
  * Literal(s)
