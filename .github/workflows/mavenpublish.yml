@@ -12,19 +12,22 @@ jobs:
     name: Create GitHub Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-
-      - name: Set up JDK 1.12      
-        uses: actions/setup-java@v1
+      - uses: actions/checkout@v2
         with:
-          java-version: 1.12
+          fetch-depth: 0
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
 
       - name: Build with Maven
-        run: mvn -B clean -B package --file pom.xml -DskipTests
+        run: ./mvnw -B clean -B package
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
+        if: startsWith(github.ref, 'refs/tags/v')
         with:
           files: |
               de.fraunhofer.aisec.mark/target/de.fraunhofer.aisec.mark-*.jar
