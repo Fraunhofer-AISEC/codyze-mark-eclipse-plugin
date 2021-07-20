@@ -20,14 +20,14 @@ jobs:
           java-version: 1.12
 
       - name: Build with Maven
-        run: mvn -B clean -B package -f de.fraunhofer.aisec.mark.parent --file pom.xml -DskipTests
+        run: mvn -B clean -B package --file pom.xml -DskipTests
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-              de.fraunhofer.aisec.mark.parent/de.fraunhofer.aisec.mark/target/de.fraunhofer.aisec.mark-*.jar
+              de.fraunhofer.aisec.mark/target/de.fraunhofer.aisec.mark-*.jar
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
