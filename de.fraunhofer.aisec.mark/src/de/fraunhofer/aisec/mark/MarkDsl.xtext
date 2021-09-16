@@ -9,7 +9,7 @@ generate markDsl "http://www.aisec.fraunhofer.de/mark/MarkDsl"
 MarkModel:
     package=PackageDeclaration
     /* either an entity or a rule, multiple per file and in arbitrary order */
-    ( decl+=EntityDeclaration | rule+=RuleDeclaration )+
+    ( decl+=EntityDeclaration | annotations+=AnnotationDeclaration | rule+=RuleDeclaration )+
 ;
 
 
@@ -27,7 +27,7 @@ PackageDeclaration:
  */
 
 EntityDeclaration:
-    'entity' name=DotQualifiedIdentifier ( 'isa' superType=[EntityDeclaration|DotQualifiedIdentifier] )? '{' content+=EntityStatement* '}'
+    (annotations+=Annotation)* 'entity' name=DotQualifiedIdentifier ( 'isa' superType=[EntityDeclaration|DotQualifiedIdentifier] )? '{' content+=EntityStatement* '}'
 ;
 
 EntityStatement:
@@ -96,7 +96,7 @@ Template:
  */
 
 RuleDeclaration:
-	'rule' name=ID '{' stmt=RuleStatement '}'
+	(annotations+=Annotation)* 'rule' name=ID '{' stmt=RuleStatement '}'
 ;
 
 RuleStatement:
