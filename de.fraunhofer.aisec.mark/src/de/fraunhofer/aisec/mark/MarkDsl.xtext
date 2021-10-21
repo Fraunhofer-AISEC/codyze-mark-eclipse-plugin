@@ -251,7 +251,7 @@ AnnotationDeclaration:
 ;
 
 AnnotationField:
-	'var' name=ID ':' ('=' default=(Literal|LiteralListExpression))? ';'
+	'var' name=ID ('=' default=(Literal|LiteralListExpression))? ';'
 ;
 
 Annotation:
