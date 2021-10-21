@@ -247,7 +247,7 @@ GroupingExpression returns OrderExpression:
  */
 
 AnnotationDeclaration:
-	'annotation' name=ID '{' fields+=AnnotationField* '}'
+	(annotations+=Annotation)* 'annotation' name=ID '{' fields+=AnnotationField* '}'
 ;
 
 AnnotationField:
