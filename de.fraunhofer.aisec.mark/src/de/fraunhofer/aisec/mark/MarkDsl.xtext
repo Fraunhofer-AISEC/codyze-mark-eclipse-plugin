@@ -9,7 +9,7 @@ generate markDsl "http://www.aisec.fraunhofer.de/mark/MarkDsl"
 MarkModel:
     package=PackageDeclaration
     /* either an entity or a rule, multiple per file and in arbitrary order */
-    ( decl+=EntityDeclaration | annotations+=AnnotationDeclaration | rule+=RuleDeclaration )+
+    ( decl+=EntityDeclaration | annotations+=AnnotationDeclaration | rule+=RuleDeclaration )*
 ;
 
 
