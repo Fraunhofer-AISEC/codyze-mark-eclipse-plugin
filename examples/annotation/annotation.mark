@@ -1,0 +1,33 @@
+package example.annotations
+
+entity T {
+	var v;
+	
+	op fun {
+		call(v);
+	}
+	
+	op fun2 {
+		do(
+			v : std::string
+		);
+		do(
+			v : java.lang.String
+		);
+	}
+}
+
+annotation A {
+	var value;
+}
+
+@A(value="Test")
+rule rule_a {
+	using T as myT
+	ensure
+		myT.v != 0
+	fail
+}
+
+@B
+annotation B {}
